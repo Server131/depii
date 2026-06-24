@@ -26,8 +26,8 @@
       </pnp:PropertyBagEntries>
 
       <!-- ── Regional Settings (Australia — locale 3081, AEST tz 76) ── -->
-      <pnp:RegionalSettings Locale="3081"
-                            TimeZone="76"
+      <pnp:RegionalSettings LocaleId="3081"
+                            TimeZoneId="76"
                             WorkDayStartHour="480"
                             WorkDayEndHour="1020"
                             FirstDayOfWeek="0"
