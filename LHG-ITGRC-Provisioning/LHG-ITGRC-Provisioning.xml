@@ -15,7 +15,7 @@
 
   <!-- ── Templates ──────────────────────────────────────────── -->
   <pnp:Templates ID="LHG-ITGRC-Templates">
-    <pnp:ProvisioningTemplate ID="LHG-ITGRC-Template" Version="1" Scope="RootSite">
+    <pnp:ProvisioningTemplate ID="LHG-ITGRC-Template" Version="1" Scope="Web">
 
       <!-- ══════════════════════════════════════════════════════
            SITE METADATA
@@ -38,10 +38,10 @@
                             Time24="false" />
 
       <!-- ══════════════════════════════════════════════════════
-           SITE SETTINGS
+           WEB SETTINGS (site title and description)
            ══════════════════════════════════════════════════════ -->
-      <pnp:SiteSettings Title="IT Governance, Risk &amp; Compliance"
-                        Description="The governance, risk and compliance hub for LHG&apos;s IT function. Managed by the GM Information Technology." />
+      <pnp:WebSettings Title="IT Governance, Risk &amp; Compliance"
+                       Description="The governance, risk and compliance hub for LHG&apos;s IT function. Managed by the GM Information Technology." />
 
       <!-- ══════════════════════════════════════════════════════
            PERMISSION GROUPS

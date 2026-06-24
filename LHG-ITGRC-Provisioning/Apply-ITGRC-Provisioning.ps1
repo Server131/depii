@@ -160,15 +160,33 @@ Write-Host "  Template: $TemplateFile" -ForegroundColor Gray
 Write-Host "  This may take several minutes — lists, views, and pages are being created." -ForegroundColor Gray
 
 try {
-    Invoke-PnPSiteTemplate -Path $TemplateFile -ErrorAction Stop
+    # Pre-validate the template before applying — surfaces schema errors with detail
+    Write-Host "  Validating template schema..." -ForegroundColor Gray
+    $validatedTemplate = Read-PnPSiteTemplate -Path $TemplateFile -ErrorAction Stop
+    Write-Success "Template schema valid."
+
+    Write-Host "  Invoking provisioning (lists, views, pages, navigation)..." -ForegroundColor Gray
+    Invoke-PnPSiteTemplate -Path $TemplateFile -Verbose -ErrorAction Stop
     $Summary.TemplateApplied = $true
     Write-Success "PnP template applied successfully."
 }
 catch {
     Write-Fail "PnP template application failed."
-    Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Red
+    # Print full exception chain so the specific failing element is visible
+    Write-Host "  Error:           $($_.Exception.Message)" -ForegroundColor Red
+    if ($_.Exception.InnerException) {
+        Write-Host "  Inner exception: $($_.Exception.InnerException.Message)" -ForegroundColor Red
+        $inner = $_.Exception.InnerException.InnerException
+        $depth = 2
+        while ($inner -ne $null -and $depth -le 5) {
+            Write-Host "  [$depth] $($inner.Message)" -ForegroundColor Red
+            $inner = $inner.InnerException
+            $depth++
+        }
+    }
+    Write-Host "  Full detail:`n$($_.Exception.ToString())" -ForegroundColor DarkRed
     $Summary.Errors.Add("STEP 4 — Template apply failed: $($_.Exception.Message)")
-    Write-Host "`n  The template failed to apply. Resolve the error above and re-run the script." -ForegroundColor Yellow
+    Write-Host "`n  The template failed to apply. Review the error chain above." -ForegroundColor Yellow
     exit 1
 }
 
