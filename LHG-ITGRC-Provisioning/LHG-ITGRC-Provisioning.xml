@@ -26,74 +26,61 @@
       </pnp:PropertyBagEntries>
 
       <!-- ── Regional Settings (Australia — locale 3081, AEST tz 76) ── -->
-      <pnp:RegionalSettings>
-        <pnp:RegionalSettings Locale="3081"
-                              TimeZone="76"
-                              WorkDayStartHour="480"
-                              WorkDayEndHour="1020"
-                              FirstDayOfWeek="0"
-                              CalendarType="1"
-                              AdjustHijriDays="0"
-                              AlternateCalendarType="0"
-                              ShowWeeks="false"
-                              Time24="false" />
-      </pnp:RegionalSettings>
+      <pnp:RegionalSettings Locale="3081"
+                            TimeZone="76"
+                            WorkDayStartHour="480"
+                            WorkDayEndHour="1020"
+                            FirstDayOfWeek="0"
+                            CalendarType="1"
+                            AdjustHijriDays="0"
+                            AlternateCalendarType="0"
+                            ShowWeeks="false"
+                            Time24="false" />
 
       <!-- ══════════════════════════════════════════════════════
-           SITE THEME
-           Custom theme: teal primary, navy secondary
+           SITE SETTINGS
            ══════════════════════════════════════════════════════ -->
-      <pnp:SiteSettings>
-        <pnp:SiteSettings Title="IT Governance, Risk &amp; Compliance"
-                          Description="The governance, risk and compliance hub for LHG&apos;s IT function. Managed by the GM Information Technology." />
-      </pnp:SiteSettings>
+      <pnp:SiteSettings Title="IT Governance, Risk &amp; Compliance"
+                        Description="The governance, risk and compliance hub for LHG&apos;s IT function. Managed by the GM Information Technology." />
 
       <!-- ══════════════════════════════════════════════════════
            PERMISSION GROUPS
            Four audience groups mapped to site roles
            ══════════════════════════════════════════════════════ -->
       <pnp:Security>
-        <pnp:AdditionalAdministrators />
-        <pnp:AdditionalOwners />
-        <pnp:AdditionalMembers />
-        <pnp:AdditionalVisitors />
         <pnp:SiteGroups>
-          <!-- IT Team — Edit access -->
+          <!-- IT Team — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-IT"
                          Description="IT team members — full Edit access to the IT GRC site"
                          Owner="{siteownersemail}"
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
-                         OnlyAllowMembersViewMembership="true"
-                         Role="Edit" />
-          <!-- Risk team — Contribute access -->
+                         OnlyAllowMembersViewMembership="true" />
+          <!-- Risk team — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-Risk"
                          Description="Risk and compliance team — Contribute access to risk and policy sections"
                          Owner="{siteownersemail}"
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
-                         OnlyAllowMembersViewMembership="true"
-                         Role="Contribute" />
-          <!-- PMO — Contribute access -->
+                         OnlyAllowMembersViewMembership="true" />
+          <!-- PMO — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-PMO"
                          Description="Project Management Office — Contribute access to project and programme sections"
                          Owner="{siteownersemail}"
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
-                         OnlyAllowMembersViewMembership="true"
-                         Role="Contribute" />
-          <!-- Executive — Read-only access -->
+                         OnlyAllowMembersViewMembership="true" />
+          <!-- Executive — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-Exec"
                          Description="Executive audience (COO, Board, Risk Committee) — Read-only access"
                          Owner="{siteownersemail}"
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
-                         OnlyAllowMembersViewMembership="true"
-                         Role="Read" />
+                         OnlyAllowMembersViewMembership="true" />
         </pnp:SiteGroups>
       </pnp:Security>
 
@@ -102,10 +89,7 @@
            8 items matching the seven sections plus Home and E8
            ══════════════════════════════════════════════════════ -->
       <pnp:Navigation>
-        <pnp:CurrentNavigation NavigationType="Managed">
-          <pnp:ManagedNavigation />
-        </pnp:CurrentNavigation>
-        <pnp:GlobalNavigation NavigationType="Structural">
+        <pnp:CurrentNavigation NavigationType="Structural">
           <pnp:StructuralNavigation RemoveExistingNodes="true">
             <pnp:NavigationNode Title="Home"
                                 Url="/sites/itgovernance/SitePages/Home.aspx"
@@ -135,7 +119,7 @@
                                 Url="/sites/itgovernance/SitePages/Essential-Eight-Maturity.aspx"
                                 IsExternal="false" />
           </pnp:StructuralNavigation>
-        </pnp:GlobalNavigation>
+        </pnp:CurrentNavigation>
       </pnp:Navigation>
 
       <!-- ══════════════════════════════════════════════════════
@@ -1444,13 +1428,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="showTopicHeader" Value="false" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1470,12 +1448,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1519,12 +1492,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1566,12 +1534,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1602,12 +1565,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1649,12 +1607,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1696,12 +1649,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1743,12 +1691,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <pnp:Section Order="1" Type="OneColumn">
               <pnp:Controls>
@@ -1779,12 +1722,7 @@
                             PromoteAsNewsArticle="false"
                             Overwrite="true"
                             Layout="Article">
-          <pnp:PageHeader Type="Custom" ServerRelativeImageUrl="" TranslateX="0" TranslateY="0" LayoutType="FullWidthImage" ShowTopicHeader="false" TopicHeader="" AlternativeText="">
-            <pnp:Properties>
-              <pnp:Property Key="backgroundColor" Value="#1F3864" />
-              <pnp:Property Key="textAlignment" Value="Left" />
-            </pnp:Properties>
-          </pnp:PageHeader>
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
           <pnp:Sections>
             <!-- Explanatory text web part above lists -->
             <pnp:Section Order="1" Type="OneColumn">
