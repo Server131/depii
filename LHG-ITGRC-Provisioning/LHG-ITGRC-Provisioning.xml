@@ -6,9 +6,9 @@
      Prepared: GM Information Technology, Lutheran Homes Group
      Version:  1.0  |  June 2026
      ============================================================ -->
-<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2022/09/ProvisioningSchema"
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2020/02/ProvisioningSchema"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xsi:schemaLocation="http://schemas.dev.office.com/PnP/2022/09/ProvisioningSchema https://raw.githubusercontent.com/pnp/PnP-Provisioning-Schema/master/ProvisioningSchema-2022-09.xsd">
+                  xsi:schemaLocation="http://schemas.dev.office.com/PnP/2020/02/ProvisioningSchema https://raw.githubusercontent.com/pnp/PnP-Provisioning-Schema/master/ProvisioningSchema-2020-02.xsd">
 
   <!-- ── Provisioning Preferences ───────────────────────────── -->
   <pnp:Preferences Generator="PnP.Framework" Version="1.0" />

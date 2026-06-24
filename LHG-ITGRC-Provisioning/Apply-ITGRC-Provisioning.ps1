@@ -160,11 +160,6 @@ Write-Host "  Template: $TemplateFile" -ForegroundColor Gray
 Write-Host "  This may take several minutes — lists, views, and pages are being created." -ForegroundColor Gray
 
 try {
-    # Pre-validate the template before applying — surfaces schema errors with detail
-    Write-Host "  Validating template schema..." -ForegroundColor Gray
-    $validatedTemplate = Read-PnPSiteTemplate -Path $TemplateFile -ErrorAction Stop
-    Write-Success "Template schema valid."
-
     Write-Host "  Invoking provisioning (lists, views, pages, navigation)..." -ForegroundColor Gray
     Invoke-PnPSiteTemplate -Path $TemplateFile -Verbose -ErrorAction Stop
     $Summary.TemplateApplied = $true
