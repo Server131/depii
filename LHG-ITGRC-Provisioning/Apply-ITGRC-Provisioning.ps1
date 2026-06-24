@@ -191,10 +191,37 @@ catch {
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STEP 5 — Apply column formatting JSON to each field
+# STEP 5 — Set regional settings (Australia — locale 3081, AEST timezone 76)
+# RegionalSettings is excluded from the XML template due to schema attribute
+# instability across PnP.PowerShell versions; applied here via Set-PnPWeb instead.
 # ══════════════════════════════════════════════════════════════════════════════
 
-Write-Step "STEP 5 — Applying column formatting"
+Write-Step "STEP 5 — Applying regional settings (locale 3081 / AEST)"
+
+try {
+    Set-PnPWeb -RegionalSettings @{
+        LocaleId             = 3081
+        TimeZone             = 76
+        WorkDayStartHour     = 480
+        WorkDayEndHour       = 1020
+        FirstDayOfWeek       = 0
+        CalendarType         = 1
+        ShowWeeks            = $false
+        Time24               = $false
+    } -ErrorAction Stop
+    Write-Success "Regional settings applied (locale 3081 / AEST timezone 76)."
+}
+catch {
+    Write-Host "  Warning: could not apply regional settings via Set-PnPWeb." -ForegroundColor Yellow
+    Write-Host "  Set manually: Site Settings > Language and region > locale 3081, timezone (UTC+10) Canberra, Melbourne, Sydney." -ForegroundColor Yellow
+    Write-Host "  Error: $($_.Exception.Message)" -ForegroundColor Gray
+}
+
+# ══════════════════════════════════════════════════════════════════════════════
+# STEP 6 — Apply column formatting JSON to each field
+# ══════════════════════════════════════════════════════════════════════════════
+
+Write-Step "STEP 6 — Applying column formatting"
 Write-Host "  Applying $($ColumnFormattingMap.Count) column formatting definitions." -ForegroundColor Gray
 
 foreach ($entry in $ColumnFormattingMap) {
@@ -228,10 +255,10 @@ foreach ($entry in $ColumnFormattingMap) {
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
-# STEP 6 — Provisioning Summary
+# STEP 7 — Provisioning Summary
 # ══════════════════════════════════════════════════════════════════════════════
 
-Write-Step "STEP 6 — Provisioning Summary" "White"
+Write-Step "STEP 7 — Provisioning Summary" "White"
 
 Write-Host "`n  Template applied:          " -NoNewline
 if ($Summary.TemplateApplied) { Write-Host "Yes" -ForegroundColor Green } else { Write-Host "No" -ForegroundColor Red }

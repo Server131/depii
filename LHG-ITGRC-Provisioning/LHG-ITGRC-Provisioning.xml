@@ -25,17 +25,8 @@
         <pnp:PropertyBagEntry Key="LHG_ITGRC_Provisioned" Value="2026-06" />
       </pnp:PropertyBagEntries>
 
-      <!-- ── Regional Settings (Australia — locale 3081, AEST tz 76) ── -->
-      <pnp:RegionalSettings LocaleId="3081"
-                            TimeZoneId="76"
-                            WorkDayStartHour="480"
-                            WorkDayEndHour="1020"
-                            FirstDayOfWeek="0"
-                            CalendarType="1"
-                            AdjustHijriDays="0"
-                            AlternateCalendarType="0"
-                            ShowWeeks="false"
-                            Time24="false" />
+      <!-- Regional settings (locale 3081 / AEST tz 76) are set manually post-provisioning
+           via Site Settings > Language and region, or via Set-PnPWeb after apply. -->
 
       <!-- ══════════════════════════════════════════════════════
            WEB SETTINGS (site title and description)
