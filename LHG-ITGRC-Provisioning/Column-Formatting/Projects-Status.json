@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "style": {
+    "display": "inline-block",
+    "border-radius": "20px",
+    "padding": "3px 12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "background-color": "=if(@currentField == 'In Progress', '#E4EAF3', if(@currentField == 'Planned', '#F0F0F0', if(@currentField == 'On Hold', '#FAEEDA', if(@currentField == 'Complete', '#E1F5EE', '#F0F0F0'))))",
+    "color": "=if(@currentField == 'In Progress', '#1F3864', if(@currentField == 'Planned', '#777777', if(@currentField == 'On Hold', '#9A5E10', if(@currentField == 'Complete', '#0F6E56', '#777777'))))"
+  },
+  "txtContent": "@currentField"
+}

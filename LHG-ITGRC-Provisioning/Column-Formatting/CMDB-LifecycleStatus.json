@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "style": {
+    "display": "inline-block",
+    "border-radius": "20px",
+    "padding": "3px 12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "background-color": "=if(@currentField == 'Active', '#E1F5EE', if(@currentField == 'Active — At Risk', '#FAEEDA', if(@currentField == 'Gap — not deployed', '#FBE3E1', if(@currentField == 'End of Life', '#FBE3E1', if(@currentField == 'Decommissioned', '#F0F0F0', if(@currentField == 'Planning', '#E4EAF3', '#F0F0F0'))))))",
+    "color": "=if(@currentField == 'Active', '#0F6E56', if(@currentField == 'Active — At Risk', '#9A5E10', if(@currentField == 'Gap — not deployed', '#B3261E', if(@currentField == 'End of Life', '#B3261E', if(@currentField == 'Decommissioned', '#777777', if(@currentField == 'Planning', '#1F3864', '#777777'))))))"
+  },
+  "txtContent": "@currentField"
+}

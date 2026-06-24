@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "style": {
+    "display": "inline-block",
+    "border-radius": "20px",
+    "padding": "3px 12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "background-color": "=if(@currentField == 'Yes', '#FBE3E1', if(@currentField == 'Under Assessment', '#FAEEDA', '#F0F0F0'))",
+    "color": "=if(@currentField == 'Yes', '#B3261E', if(@currentField == 'Under Assessment', '#9A5E10', '#777777'))"
+  },
+  "txtContent": "@currentField"
+}
