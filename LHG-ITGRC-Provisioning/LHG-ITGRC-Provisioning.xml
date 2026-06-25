@@ -43,7 +43,7 @@
           <!-- IT Team — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-IT"
                          Description="IT team members — full Edit access to the IT GRC site"
-                         Owner="{siteownersemail}"
+
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
@@ -51,7 +51,7 @@
           <!-- Risk team — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-Risk"
                          Description="Risk and compliance team — Contribute access to risk and policy sections"
-                         Owner="{siteownersemail}"
+
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
@@ -59,7 +59,7 @@
           <!-- PMO — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-PMO"
                          Description="Project Management Office — Contribute access to project and programme sections"
-                         Owner="{siteownersemail}"
+
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
@@ -67,7 +67,7 @@
           <!-- Executive — permission assignment handled post-provisioning via PowerShell -->
           <pnp:SiteGroup Title="IT-GRC-Exec"
                          Description="Executive audience (COO, Board, Risk Committee) — Read-only access"
-                         Owner="{siteownersemail}"
+
                          AllowMembersEditMembership="false"
                          AllowRequestToJoinLeave="false"
                          AutoAcceptRequestToJoinLeave="false"
