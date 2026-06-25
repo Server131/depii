@@ -1,0 +1,1732 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ============================================================
+     LHG IT GRC SharePoint Provisioning Template
+     Schema:   PnP Provisioning Schema 2022-09
+     Target:   https://lutheranhomesgroup.sharepoint.com/sites/itgovernance/
+     Prepared: GM Information Technology, Lutheran Homes Group
+     Version:  1.0  |  June 2026
+     ============================================================ -->
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2020/02/ProvisioningSchema"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://schemas.dev.office.com/PnP/2020/02/ProvisioningSchema https://raw.githubusercontent.com/pnp/PnP-Provisioning-Schema/master/ProvisioningSchema-2020-02.xsd">
+
+  <!-- ── Provisioning Preferences ───────────────────────────── -->
+  <pnp:Preferences Generator="PnP.Framework" Version="1.0" />
+
+  <!-- ── Templates ──────────────────────────────────────────── -->
+  <pnp:Templates ID="LHG-ITGRC-Templates">
+    <pnp:ProvisioningTemplate ID="LHG-ITGRC-Template" Version="1" Scope="Web">
+
+      <!-- ══════════════════════════════════════════════════════
+           SITE METADATA
+           ══════════════════════════════════════════════════════ -->
+      <pnp:PropertyBagEntries>
+        <pnp:PropertyBagEntry Key="LHG_ITGRC_Version" Value="1.0" />
+        <pnp:PropertyBagEntry Key="LHG_ITGRC_Provisioned" Value="2026-06" />
+      </pnp:PropertyBagEntries>
+
+      <!-- Regional settings (locale 3081 / AEST tz 76) are set manually post-provisioning
+           via Site Settings > Language and region, or via Set-PnPWeb after apply. -->
+
+      <!-- ══════════════════════════════════════════════════════
+           WEB SETTINGS (site title and description)
+           ══════════════════════════════════════════════════════ -->
+      <pnp:WebSettings Title="IT Governance, Risk &amp; Compliance"
+                       Description="The governance, risk and compliance hub for LHG&apos;s IT function. Managed by the GM Information Technology." />
+
+      <!-- ══════════════════════════════════════════════════════
+           PERMISSION GROUPS
+           Four audience groups mapped to site roles
+           ══════════════════════════════════════════════════════ -->
+      <pnp:Security>
+        <pnp:SiteGroups>
+          <!-- IT Team — permission assignment handled post-provisioning via PowerShell -->
+          <pnp:SiteGroup Title="IT-GRC-IT"
+                         Description="IT team members — full Edit access to the IT GRC site"
+
+                         AllowMembersEditMembership="false"
+                         AllowRequestToJoinLeave="false"
+                         AutoAcceptRequestToJoinLeave="false"
+                         OnlyAllowMembersViewMembership="true" />
+          <!-- Risk team — permission assignment handled post-provisioning via PowerShell -->
+          <pnp:SiteGroup Title="IT-GRC-Risk"
+                         Description="Risk and compliance team — Contribute access to risk and policy sections"
+
+                         AllowMembersEditMembership="false"
+                         AllowRequestToJoinLeave="false"
+                         AutoAcceptRequestToJoinLeave="false"
+                         OnlyAllowMembersViewMembership="true" />
+          <!-- PMO — permission assignment handled post-provisioning via PowerShell -->
+          <pnp:SiteGroup Title="IT-GRC-PMO"
+                         Description="Project Management Office — Contribute access to project and programme sections"
+
+                         AllowMembersEditMembership="false"
+                         AllowRequestToJoinLeave="false"
+                         AutoAcceptRequestToJoinLeave="false"
+                         OnlyAllowMembersViewMembership="true" />
+          <!-- Executive — permission assignment handled post-provisioning via PowerShell -->
+          <pnp:SiteGroup Title="IT-GRC-Exec"
+                         Description="Executive audience (COO, Board, Risk Committee) — Read-only access"
+
+                         AllowMembersEditMembership="false"
+                         AllowRequestToJoinLeave="false"
+                         AutoAcceptRequestToJoinLeave="false"
+                         OnlyAllowMembersViewMembership="true" />
+        </pnp:SiteGroups>
+      </pnp:Security>
+
+      <!-- ══════════════════════════════════════════════════════
+           LEFT NAVIGATION
+           8 items matching the seven sections plus Home and E8
+           ══════════════════════════════════════════════════════ -->
+      <pnp:Navigation>
+        <pnp:CurrentNavigation NavigationType="Structural">
+          <pnp:StructuralNavigation RemoveExistingNodes="true">
+            <pnp:NavigationNode Title="Home"
+                                Url="/sites/itgovernance/SitePages/Home.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="Executive Dashboard"
+                                Url="/sites/itgovernance/SitePages/Executive-Dashboard.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="Risk &amp; Compliance"
+                                Url="/sites/itgovernance/SitePages/Risk-Compliance.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="Policy, Standards &amp; Principles"
+                                Url="/sites/itgovernance/SitePages/Policy-Standards-Principles.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="Projects &amp; Programme"
+                                Url="/sites/itgovernance/SitePages/Projects-Programme.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="Cyber &amp; Security"
+                                Url="/sites/itgovernance/SitePages/Cyber-Security.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="IT Operations &amp; Architecture"
+                                Url="/sites/itgovernance/SitePages/IT-Operations-Architecture.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="Training &amp; Awareness"
+                                Url="/sites/itgovernance/SitePages/Training-Awareness.aspx"
+                                IsExternal="false" />
+            <pnp:NavigationNode Title="Essential Eight Maturity"
+                                Url="/sites/itgovernance/SitePages/Essential-Eight-Maturity.aspx"
+                                IsExternal="false" />
+          </pnp:StructuralNavigation>
+        </pnp:CurrentNavigation>
+      </pnp:Navigation>
+
+      <!-- ══════════════════════════════════════════════════════
+           LISTS
+           8 lists — empty shells with full schema
+           ══════════════════════════════════════════════════════ -->
+      <pnp:Lists>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 1: IT Risk Register
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="IT Risk Register"
+                          Description="Source of truth for all IT risk items. Full granularity — operational, tactical, technical. Escalation threshold metadata drives integration with the enterprise risk register."
+                          TemplateType="100"
+                          Url="Lists/IT-Risk-Register"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A1B2C301-0001-0000-0000-000000000001}" Name="RiskID" StaticName="RiskID"
+                   DisplayName="Risk ID" Type="Text" Required="TRUE" MaxLength="20" />
+
+            <Field ID="{A1B2C301-0002-0000-0000-000000000001}" Name="RiskDescription" StaticName="RiskDescription"
+                   DisplayName="Description" Type="Note" Required="TRUE" NumLines="4" RichText="FALSE" />
+
+            <Field ID="{A1B2C301-0003-0000-0000-000000000001}" Name="RiskCategory" StaticName="RiskCategory"
+                   DisplayName="Category" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Cyber Security</CHOICE>
+                <CHOICE>Clinical Technology</CHOICE>
+                <CHOICE>Operational</CHOICE>
+                <CHOICE>Vendor &amp; Third Party</CHOICE>
+                <CHOICE>Regulatory &amp; Compliance</CHOICE>
+                <CHOICE>People &amp; Culture</CHOICE>
+                <CHOICE>Physical &amp; Environmental</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A1B2C301-0004-0000-0000-000000000001}" Name="Likelihood" StaticName="Likelihood"
+                   DisplayName="Likelihood" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Low</CHOICE>
+                <CHOICE>Medium</CHOICE>
+                <CHOICE>High</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A1B2C301-0005-0000-0000-000000000001}" Name="Impact" StaticName="Impact"
+                   DisplayName="Impact" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Low</CHOICE>
+                <CHOICE>Medium</CHOICE>
+                <CHOICE>High</CHOICE>
+                <CHOICE>Critical</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A1B2C301-0006-0000-0000-000000000001}" Name="RiskRating" StaticName="RiskRating"
+                   DisplayName="Risk Rating" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Low</CHOICE>
+                <CHOICE>Medium</CHOICE>
+                <CHOICE>High</CHOICE>
+                <CHOICE>Critical</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A1B2C301-0007-0000-0000-000000000001}" Name="CurrentMitigant" StaticName="CurrentMitigant"
+                   DisplayName="Current Mitigant / Control" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+
+            <Field ID="{A1B2C301-0008-0000-0000-000000000001}" Name="RiskOwner" StaticName="RiskOwner"
+                   DisplayName="Risk Owner" Type="User" Required="FALSE" UserSelectionMode="0" />
+
+            <Field ID="{A1B2C301-0009-0000-0000-000000000001}" Name="ReviewDate" StaticName="ReviewDate"
+                   DisplayName="Review Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A1B2C301-0010-0000-0000-000000000001}" Name="EscalateToEnterprise" StaticName="EscalateToEnterprise"
+                   DisplayName="Escalate to Enterprise Register" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Yes</CHOICE>
+                <CHOICE>No</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A1B2C301-0011-0000-0000-000000000001}" Name="CareImpactClass" StaticName="CareImpactClass"
+                   DisplayName="Care Impact Class" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Class 1 — Direct</CHOICE>
+                <CHOICE>Class 2 — Indirect</CHOICE>
+                <CHOICE>Class 3 — Operational</CHOICE>
+                <CHOICE>N/A</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A1B2C301-0012-0000-0000-000000000001}" Name="RiskNotes" StaticName="RiskNotes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: all columns, sorted by Risk Rating descending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="RiskID" />
+                <pnp:FieldRef Name="RiskDescription" />
+                <pnp:FieldRef Name="RiskCategory" />
+                <pnp:FieldRef Name="Likelihood" />
+                <pnp:FieldRef Name="Impact" />
+                <pnp:FieldRef Name="RiskRating" />
+                <pnp:FieldRef Name="CurrentMitigant" />
+                <pnp:FieldRef Name="RiskOwner" />
+                <pnp:FieldRef Name="ReviewDate" />
+                <pnp:FieldRef Name="EscalateToEnterprise" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="RiskNotes" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="RiskRating" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Escalated Risks view -->
+            <pnp:View DisplayName="Escalated Risks" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="RiskID" />
+                <pnp:FieldRef Name="RiskDescription" />
+                <pnp:FieldRef Name="RiskRating" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="CurrentMitigant" />
+                <pnp:FieldRef Name="ReviewDate" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Eq>
+                    <FieldRef Name="EscalateToEnterprise" />
+                    <Value Type="Choice">Yes</Value>
+                  </Eq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="RiskRating" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Executive View: High and Critical risks only -->
+            <pnp:View DisplayName="Executive View" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="RiskID" />
+                <pnp:FieldRef Name="RiskDescription" />
+                <pnp:FieldRef Name="RiskRating" />
+                <pnp:FieldRef Name="EscalateToEnterprise" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <In>
+                    <FieldRef Name="RiskRating" />
+                    <Values>
+                      <Value Type="Choice">High</Value>
+                      <Value Type="Choice">Critical</Value>
+                    </Values>
+                  </In>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="RiskRating" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 2: CMDB — Asset & Configuration Register
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="CMDB — Asset &amp; Configuration Register"
+                          Description="Structured register of IT assets, configuration attributes, care impact classification, and lifecycle status."
+                          TemplateType="100"
+                          Url="Lists/CMDB"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A2B3C401-0001-0000-0000-000000000002}" Name="CIID" StaticName="CIID"
+                   DisplayName="CI ID" Type="Text" Required="TRUE" MaxLength="20" />
+
+            <Field ID="{A2B3C401-0002-0000-0000-000000000002}" Name="CIName" StaticName="CIName"
+                   DisplayName="CI Name" Type="Text" Required="TRUE" MaxLength="255" />
+
+            <Field ID="{A2B3C401-0003-0000-0000-000000000002}" Name="CIType" StaticName="CIType"
+                   DisplayName="CI Type" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Application</CHOICE>
+                <CHOICE>Infrastructure — Server</CHOICE>
+                <CHOICE>Infrastructure — Network</CHOICE>
+                <CHOICE>Infrastructure — Endpoint</CHOICE>
+                <CHOICE>Infrastructure — Security</CHOICE>
+                <CHOICE>Infrastructure — Backup</CHOICE>
+                <CHOICE>Infrastructure — Identity</CHOICE>
+                <CHOICE>Infrastructure — Datacentre</CHOICE>
+                <CHOICE>Infrastructure — Wireless</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A2B3C401-0004-0000-0000-000000000002}" Name="CareImpactClass" StaticName="CareImpactClass"
+                   DisplayName="Care Impact Class" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Class 1 — Direct</CHOICE>
+                <CHOICE>Class 2 — Indirect</CHOICE>
+                <CHOICE>Class 3 — Operational</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A2B3C401-0005-0000-0000-000000000002}" Name="ITCriticality" StaticName="ITCriticality"
+                   DisplayName="IT Criticality" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Critical</CHOICE>
+                <CHOICE>High</CHOICE>
+                <CHOICE>Medium</CHOICE>
+                <CHOICE>Low</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A2B3C401-0006-0000-0000-000000000002}" Name="BusinessFunction" StaticName="BusinessFunction"
+                   DisplayName="Business Function" Type="Text" Required="FALSE" MaxLength="255" />
+
+            <Field ID="{A2B3C401-0007-0000-0000-000000000002}" Name="Sites" StaticName="Sites"
+                   DisplayName="Site(s)" Type="Text" Required="FALSE" MaxLength="255" />
+
+            <Field ID="{A2B3C401-0008-0000-0000-000000000002}" Name="Vendor" StaticName="Vendor"
+                   DisplayName="Vendor / Supplier" Type="Text" Required="FALSE" MaxLength="255" />
+
+            <Field ID="{A2B3C401-0009-0000-0000-000000000002}" Name="ManagedBy" StaticName="ManagedBy"
+                   DisplayName="Managed By" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>IT Team</CHOICE>
+                <CHOICE>Pact IT</CHOICE>
+                <CHOICE>Vendor</CHOICE>
+                <CHOICE>LHG Business Owner</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A2B3C401-0010-0000-0000-000000000002}" Name="Environment" StaticName="Environment"
+                   DisplayName="Environment" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Production</CHOICE>
+                <CHOICE>Cloud (SaaS)</CHOICE>
+                <CHOICE>Cloud (PaaS/IaaS)</CHOICE>
+                <CHOICE>Development</CHOICE>
+                <CHOICE>Test / UAT</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A2B3C401-0011-0000-0000-000000000002}" Name="LifecycleStatus" StaticName="LifecycleStatus"
+                   DisplayName="Lifecycle Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Active</CHOICE>
+                <CHOICE>Active — At Risk</CHOICE>
+                <CHOICE>Gap — not deployed</CHOICE>
+                <CHOICE>End of Life</CHOICE>
+                <CHOICE>Decommissioned</CHOICE>
+                <CHOICE>Planning</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A2B3C401-0012-0000-0000-000000000002}" Name="RTOHours" StaticName="RTOHours"
+                   DisplayName="RTO (hrs)" Type="Number" Required="FALSE" Min="0" />
+
+            <Field ID="{A2B3C401-0013-0000-0000-000000000002}" Name="RPOHours" StaticName="RPOHours"
+                   DisplayName="RPO (hrs)" Type="Number" Required="FALSE" Min="0" />
+
+            <Field ID="{A2B3C401-0014-0000-0000-000000000002}" Name="LastReviewed" StaticName="LastReviewed"
+                   DisplayName="Last Reviewed" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A2B3C401-0015-0000-0000-000000000002}" Name="NextReview" StaticName="NextReview"
+                   DisplayName="Next Review" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A2B3C401-0016-0000-0000-000000000002}" Name="EscalateToEnterprise" StaticName="EscalateToEnterprise"
+                   DisplayName="Escalate to Enterprise Register" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Yes</CHOICE>
+                <CHOICE>No</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A2B3C401-0017-0000-0000-000000000002}" Name="CINotes" StaticName="CINotes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: all columns, sorted by Care Impact Class ascending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="CIID" />
+                <pnp:FieldRef Name="CIName" />
+                <pnp:FieldRef Name="CIType" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="ITCriticality" />
+                <pnp:FieldRef Name="BusinessFunction" />
+                <pnp:FieldRef Name="Sites" />
+                <pnp:FieldRef Name="Vendor" />
+                <pnp:FieldRef Name="ManagedBy" />
+                <pnp:FieldRef Name="Environment" />
+                <pnp:FieldRef Name="LifecycleStatus" />
+                <pnp:FieldRef Name="RTOHours" />
+                <pnp:FieldRef Name="RPOHours" />
+                <pnp:FieldRef Name="LastReviewed" />
+                <pnp:FieldRef Name="NextReview" />
+                <pnp:FieldRef Name="EscalateToEnterprise" />
+                <pnp:FieldRef Name="CINotes" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="CareImpactClass" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Class 1 Systems view -->
+            <pnp:View DisplayName="Class 1 Systems" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="CIID" />
+                <pnp:FieldRef Name="CIName" />
+                <pnp:FieldRef Name="CIType" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="ITCriticality" />
+                <pnp:FieldRef Name="BusinessFunction" />
+                <pnp:FieldRef Name="Sites" />
+                <pnp:FieldRef Name="Vendor" />
+                <pnp:FieldRef Name="ManagedBy" />
+                <pnp:FieldRef Name="Environment" />
+                <pnp:FieldRef Name="LifecycleStatus" />
+                <pnp:FieldRef Name="RTOHours" />
+                <pnp:FieldRef Name="RPOHours" />
+                <pnp:FieldRef Name="LastReviewed" />
+                <pnp:FieldRef Name="NextReview" />
+                <pnp:FieldRef Name="EscalateToEnterprise" />
+                <pnp:FieldRef Name="CINotes" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Eq>
+                    <FieldRef Name="CareImpactClass" />
+                    <Value Type="Choice">Class 1 — Direct</Value>
+                  </Eq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="ITCriticality" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 3: Policy, Standards & Principles Library
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="Policy, Standards &amp; Principles Library"
+                          Description="Controlled library of IT policies, architecture principles, and standards with named owners, version control, and review cycles."
+                          TemplateType="100"
+                          Url="Lists/Policy-Library"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A3B4C501-0001-0000-0000-000000000003}" Name="PolicyReference" StaticName="PolicyReference"
+                   DisplayName="Reference" Type="Text" Required="TRUE" MaxLength="20" />
+
+            <Field ID="{A3B4C501-0002-0000-0000-000000000003}" Name="PolicyTitle" StaticName="PolicyTitle"
+                   DisplayName="Title" Type="Text" Required="TRUE" MaxLength="255" />
+
+            <Field ID="{A3B4C501-0003-0000-0000-000000000003}" Name="DocumentType" StaticName="DocumentType"
+                   DisplayName="Document Type" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Policy</CHOICE>
+                <CHOICE>Standard</CHOICE>
+                <CHOICE>Procedure</CHOICE>
+                <CHOICE>Principle</CHOICE>
+                <CHOICE>Framework</CHOICE>
+                <CHOICE>Guideline</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A3B4C501-0004-0000-0000-000000000003}" Name="PolicyOwner" StaticName="PolicyOwner"
+                   DisplayName="Owner" Type="User" Required="TRUE" UserSelectionMode="0" />
+
+            <Field ID="{A3B4C501-0005-0000-0000-000000000003}" Name="Version" StaticName="Version"
+                   DisplayName="Version" Type="Text" Required="FALSE" MaxLength="20" />
+
+            <Field ID="{A3B4C501-0006-0000-0000-000000000003}" Name="EffectiveDate" StaticName="EffectiveDate"
+                   DisplayName="Effective Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A3B4C501-0007-0000-0000-000000000003}" Name="NextReviewDate" StaticName="NextReviewDate"
+                   DisplayName="Next Review Date" Type="DateTime" Required="TRUE" Format="DateOnly" />
+
+            <Field ID="{A3B4C501-0008-0000-0000-000000000003}" Name="PolicyStatus" StaticName="PolicyStatus"
+                   DisplayName="Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Draft</CHOICE>
+                <CHOICE>In Review</CHOICE>
+                <CHOICE>Approved</CHOICE>
+                <CHOICE>Superseded</CHOICE>
+                <CHOICE>Retired</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A3B4C501-0009-0000-0000-000000000003}" Name="DocumentLink" StaticName="DocumentLink"
+                   DisplayName="Document Link" Type="URL" Required="FALSE" Format="Hyperlink" />
+
+            <Field ID="{A3B4C501-0010-0000-0000-000000000003}" Name="RegulatoryAlignment" StaticName="RegulatoryAlignment"
+                   DisplayName="Regulatory Alignment" Type="Text" Required="FALSE" MaxLength="500" />
+
+            <Field ID="{A3B4C501-0011-0000-0000-000000000003}" Name="PolicyNotes" StaticName="PolicyNotes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: sorted by Document Type ascending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="PolicyReference" />
+                <pnp:FieldRef Name="PolicyTitle" />
+                <pnp:FieldRef Name="DocumentType" />
+                <pnp:FieldRef Name="PolicyOwner" />
+                <pnp:FieldRef Name="Version" />
+                <pnp:FieldRef Name="NextReviewDate" />
+                <pnp:FieldRef Name="PolicyStatus" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="DocumentType" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Approved Documents view -->
+            <pnp:View DisplayName="Approved Documents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="PolicyReference" />
+                <pnp:FieldRef Name="PolicyTitle" />
+                <pnp:FieldRef Name="DocumentType" />
+                <pnp:FieldRef Name="PolicyOwner" />
+                <pnp:FieldRef Name="Version" />
+                <pnp:FieldRef Name="NextReviewDate" />
+                <pnp:FieldRef Name="PolicyStatus" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Eq>
+                    <FieldRef Name="PolicyStatus" />
+                    <Value Type="Choice">Approved</Value>
+                  </Eq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="DocumentType" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Due for Review within 30 days -->
+            <pnp:View DisplayName="Due for Review" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="PolicyReference" />
+                <pnp:FieldRef Name="PolicyTitle" />
+                <pnp:FieldRef Name="DocumentType" />
+                <pnp:FieldRef Name="PolicyOwner" />
+                <pnp:FieldRef Name="NextReviewDate" />
+                <pnp:FieldRef Name="PolicyStatus" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Leq>
+                    <FieldRef Name="NextReviewDate" />
+                    <Value Type="DateTime" OffsetDays="30"><Today /></Value>
+                  </Leq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="NextReviewDate" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 4: Projects & Programme
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="Projects &amp; Programme"
+                          Description="Active IT projects, RAG status, budget tracking, and FY roadmap. Primary audience: PMO, IT team, Exec."
+                          TemplateType="100"
+                          Url="Lists/Projects-Programme"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A4B5C601-0001-0000-0000-000000000004}" Name="ProjectID" StaticName="ProjectID"
+                   DisplayName="Project ID" Type="Text" Required="TRUE" MaxLength="20" />
+
+            <Field ID="{A4B5C601-0002-0000-0000-000000000004}" Name="ProjectName" StaticName="ProjectName"
+                   DisplayName="Project Name" Type="Text" Required="TRUE" MaxLength="255" />
+
+            <Field ID="{A4B5C601-0003-0000-0000-000000000004}" Name="ProjectDescription" StaticName="ProjectDescription"
+                   DisplayName="Description" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+
+            <Field ID="{A4B5C601-0004-0000-0000-000000000004}" Name="ProjectStatus" StaticName="ProjectStatus"
+                   DisplayName="Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Planned</CHOICE>
+                <CHOICE>In Progress</CHOICE>
+                <CHOICE>On Hold</CHOICE>
+                <CHOICE>Complete</CHOICE>
+                <CHOICE>Cancelled</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A4B5C601-0005-0000-0000-000000000004}" Name="RAGStatus" StaticName="RAGStatus"
+                   DisplayName="RAG Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Green</CHOICE>
+                <CHOICE>Amber</CHOICE>
+                <CHOICE>Red</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A4B5C601-0006-0000-0000-000000000004}" Name="ProjectOwner" StaticName="ProjectOwner"
+                   DisplayName="Project Owner" Type="User" Required="TRUE" UserSelectionMode="0" />
+
+            <Field ID="{A4B5C601-0007-0000-0000-000000000004}" Name="BudgetStatus" StaticName="BudgetStatus"
+                   DisplayName="Budget Status" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Pending Approval</CHOICE>
+                <CHOICE>Approved</CHOICE>
+                <CHOICE>Overspend</CHOICE>
+                <CHOICE>N/A</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A4B5C601-0008-0000-0000-000000000004}" Name="StartDate" StaticName="StartDate"
+                   DisplayName="Start Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A4B5C601-0009-0000-0000-000000000004}" Name="TargetCompletion" StaticName="TargetCompletion"
+                   DisplayName="Target Completion" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A4B5C601-0010-0000-0000-000000000004}" Name="PercentComplete" StaticName="PercentComplete"
+                   DisplayName="% Complete" Type="Number" Required="FALSE" Min="0" Max="100" />
+
+            <Field ID="{A4B5C601-0011-0000-0000-000000000004}" Name="Dependencies" StaticName="Dependencies"
+                   DisplayName="Dependencies" Type="Note" Required="FALSE" NumLines="3" RichText="FALSE" />
+
+            <Field ID="{A4B5C601-0012-0000-0000-000000000004}" Name="ProjectNotes" StaticName="ProjectNotes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: sorted by RAG Status descending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="ProjectID" />
+                <pnp:FieldRef Name="ProjectName" />
+                <pnp:FieldRef Name="ProjectStatus" />
+                <pnp:FieldRef Name="RAGStatus" />
+                <pnp:FieldRef Name="ProjectOwner" />
+                <pnp:FieldRef Name="TargetCompletion" />
+                <pnp:FieldRef Name="PercentComplete" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="RAGStatus" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Active Projects view -->
+            <pnp:View DisplayName="Active Projects" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="ProjectID" />
+                <pnp:FieldRef Name="ProjectName" />
+                <pnp:FieldRef Name="ProjectStatus" />
+                <pnp:FieldRef Name="RAGStatus" />
+                <pnp:FieldRef Name="ProjectOwner" />
+                <pnp:FieldRef Name="TargetCompletion" />
+                <pnp:FieldRef Name="PercentComplete" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Eq>
+                    <FieldRef Name="ProjectStatus" />
+                    <Value Type="Choice">In Progress</Value>
+                  </Eq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="RAGStatus" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 5: Essential Eight Maturity
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="Essential Eight Maturity"
+                          Description="ACSC Essential Eight maturity assessment register. Tracks current vs target maturity by control, gap analysis, and remediation actions."
+                          TemplateType="100"
+                          Url="Lists/Essential-Eight"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A5B6C701-0001-0000-0000-000000000005}" Name="E8Control" StaticName="E8Control"
+                   DisplayName="Control" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Application control</CHOICE>
+                <CHOICE>Patch applications</CHOICE>
+                <CHOICE>Configure Microsoft Office macro settings</CHOICE>
+                <CHOICE>User application hardening</CHOICE>
+                <CHOICE>Restrict administrative privileges</CHOICE>
+                <CHOICE>Patch operating systems</CHOICE>
+                <CHOICE>Multi-factor authentication</CHOICE>
+                <CHOICE>Regular backups</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A5B6C701-0002-0000-0000-000000000005}" Name="ControlDescription" StaticName="ControlDescription"
+                   DisplayName="Control Description" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+
+            <Field ID="{A5B6C701-0003-0000-0000-000000000005}" Name="CurrentMaturity" StaticName="CurrentMaturity"
+                   DisplayName="Current Maturity Level" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Level 0</CHOICE>
+                <CHOICE>Level 1</CHOICE>
+                <CHOICE>Level 2</CHOICE>
+                <CHOICE>Level 3</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A5B6C701-0004-0000-0000-000000000005}" Name="TargetMaturity" StaticName="TargetMaturity"
+                   DisplayName="Target Maturity Level" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Level 0</CHOICE>
+                <CHOICE>Level 1</CHOICE>
+                <CHOICE>Level 2</CHOICE>
+                <CHOICE>Level 3</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <!-- Calculated gap: numeric difference between target and current maturity levels -->
+            <Field ID="{A5B6C701-0005-0000-0000-000000000005}" Name="MaturityGap" StaticName="MaturityGap"
+                   DisplayName="Maturity Gap" Type="Calculated" ResultType="Number" ReadOnly="TRUE">
+              <Formula>=IF(ISNUMBER(VALUE(RIGHT([Target Maturity Level],1))),VALUE(RIGHT([Target Maturity Level],1))-VALUE(RIGHT([Current Maturity Level],1)),0)</Formula>
+              <FieldRefs>
+                <FieldRef Name="TargetMaturity" />
+                <FieldRef Name="CurrentMaturity" />
+              </FieldRefs>
+            </Field>
+
+            <Field ID="{A5B6C701-0006-0000-0000-000000000005}" Name="AssessmentStatus" StaticName="AssessmentStatus"
+                   DisplayName="Assessment Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Not met</CHOICE>
+                <CHOICE>In progress</CHOICE>
+                <CHOICE>On target</CHOICE>
+                <CHOICE>Achieved</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A5B6C701-0007-0000-0000-000000000005}" Name="LastAssessed" StaticName="LastAssessed"
+                   DisplayName="Last Assessed" Type="DateTime" Required="TRUE" Format="DateOnly" />
+
+            <Field ID="{A5B6C701-0008-0000-0000-000000000005}" Name="NextAssessment" StaticName="NextAssessment"
+                   DisplayName="Next Assessment Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A5B6C701-0009-0000-0000-000000000005}" Name="AssessedBy" StaticName="AssessedBy"
+                   DisplayName="Assessed By" Type="Text" Required="FALSE" MaxLength="255" />
+
+            <Field ID="{A5B6C701-0010-0000-0000-000000000005}" Name="AssessmentEvidence" StaticName="AssessmentEvidence"
+                   DisplayName="Evidence / Reference" Type="URL" Required="FALSE" Format="Hyperlink" />
+
+            <Field ID="{A5B6C701-0011-0000-0000-000000000005}" Name="GapDescription" StaticName="GapDescription"
+                   DisplayName="Gap Description" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+
+            <Field ID="{A5B6C701-0012-0000-0000-000000000005}" Name="RemediationOwner" StaticName="RemediationOwner"
+                   DisplayName="Remediation Owner" Type="User" Required="FALSE" UserSelectionMode="0" />
+
+            <Field ID="{A5B6C701-0013-0000-0000-000000000005}" Name="RemediationTarget" StaticName="RemediationTarget"
+                   DisplayName="Remediation Target Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A5B6C701-0014-0000-0000-000000000005}" Name="LinkedProject" StaticName="LinkedProject"
+                   DisplayName="Linked Project" Type="Text" Required="FALSE" MaxLength="50" />
+
+            <Field ID="{A5B6C701-0015-0000-0000-000000000005}" Name="E8Notes" StaticName="E8Notes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: all except Notes, sorted by Assessment Status ascending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="E8Control" />
+                <pnp:FieldRef Name="ControlDescription" />
+                <pnp:FieldRef Name="CurrentMaturity" />
+                <pnp:FieldRef Name="TargetMaturity" />
+                <pnp:FieldRef Name="MaturityGap" />
+                <pnp:FieldRef Name="AssessmentStatus" />
+                <pnp:FieldRef Name="LastAssessed" />
+                <pnp:FieldRef Name="NextAssessment" />
+                <pnp:FieldRef Name="AssessedBy" />
+                <pnp:FieldRef Name="AssessmentEvidence" />
+                <pnp:FieldRef Name="GapDescription" />
+                <pnp:FieldRef Name="RemediationOwner" />
+                <pnp:FieldRef Name="RemediationTarget" />
+                <pnp:FieldRef Name="LinkedProject" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="AssessmentStatus" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Gaps Only: Not met or In progress -->
+            <pnp:View DisplayName="Gaps Only" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="E8Control" />
+                <pnp:FieldRef Name="CurrentMaturity" />
+                <pnp:FieldRef Name="TargetMaturity" />
+                <pnp:FieldRef Name="MaturityGap" />
+                <pnp:FieldRef Name="AssessmentStatus" />
+                <pnp:FieldRef Name="GapDescription" />
+                <pnp:FieldRef Name="RemediationOwner" />
+                <pnp:FieldRef Name="RemediationTarget" />
+                <pnp:FieldRef Name="LinkedProject" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Or>
+                    <Eq>
+                      <FieldRef Name="AssessmentStatus" />
+                      <Value Type="Choice">Not met</Value>
+                    </Eq>
+                    <Eq>
+                      <FieldRef Name="AssessmentStatus" />
+                      <Value Type="Choice">In progress</Value>
+                    </Eq>
+                  </Or>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="MaturityGap" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Assessment Summary: control, maturity, gap, status, remediation target -->
+            <pnp:View DisplayName="Assessment Summary" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="E8Control" />
+                <pnp:FieldRef Name="CurrentMaturity" />
+                <pnp:FieldRef Name="TargetMaturity" />
+                <pnp:FieldRef Name="MaturityGap" />
+                <pnp:FieldRef Name="AssessmentStatus" />
+                <pnp:FieldRef Name="RemediationTarget" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="MaturityGap" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 6: Change Log
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="Change Log"
+                          Description="Record of all IT changes reviewed and approved by the Change Advisory Board (CAB). Includes care impact classification and outcome tracking."
+                          TemplateType="100"
+                          Url="Lists/Change-Log"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A6B7C801-0001-0000-0000-000000000006}" Name="ChangeID" StaticName="ChangeID"
+                   DisplayName="Change ID" Type="Text" Required="TRUE" MaxLength="20" />
+
+            <Field ID="{A6B7C801-0002-0000-0000-000000000006}" Name="ChangeTitle" StaticName="ChangeTitle"
+                   DisplayName="Change Title" Type="Text" Required="TRUE" MaxLength="255" />
+
+            <Field ID="{A6B7C801-0003-0000-0000-000000000006}" Name="ChangeType" StaticName="ChangeType"
+                   DisplayName="Change Type" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Standard</CHOICE>
+                <CHOICE>Normal</CHOICE>
+                <CHOICE>Emergency</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A6B7C801-0004-0000-0000-000000000006}" Name="ChangeStatus" StaticName="ChangeStatus"
+                   DisplayName="Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Draft</CHOICE>
+                <CHOICE>Submitted</CHOICE>
+                <CHOICE>Approved</CHOICE>
+                <CHOICE>Rejected</CHOICE>
+                <CHOICE>Implemented</CHOICE>
+                <CHOICE>Failed</CHOICE>
+                <CHOICE>Cancelled</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A6B7C801-0005-0000-0000-000000000006}" Name="RequestedBy" StaticName="RequestedBy"
+                   DisplayName="Requested By" Type="User" Required="TRUE" UserSelectionMode="0" />
+
+            <Field ID="{A6B7C801-0006-0000-0000-000000000006}" Name="ApprovedBy" StaticName="ApprovedBy"
+                   DisplayName="Approved By" Type="User" Required="FALSE" UserSelectionMode="0" />
+
+            <Field ID="{A6B7C801-0007-0000-0000-000000000006}" Name="AffectedSystems" StaticName="AffectedSystems"
+                   DisplayName="Affected Systems" Type="Text" Required="FALSE" MaxLength="500" />
+
+            <Field ID="{A6B7C801-0008-0000-0000-000000000006}" Name="CareImpactClass" StaticName="CareImpactClass"
+                   DisplayName="Care Impact Class" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Class 1 — Direct</CHOICE>
+                <CHOICE>Class 2 — Indirect</CHOICE>
+                <CHOICE>Class 3 — Operational</CHOICE>
+                <CHOICE>None</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A6B7C801-0009-0000-0000-000000000006}" Name="PlannedDate" StaticName="PlannedDate"
+                   DisplayName="Planned Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A6B7C801-0010-0000-0000-000000000006}" Name="ImplementedDate" StaticName="ImplementedDate"
+                   DisplayName="Implemented Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A6B7C801-0011-0000-0000-000000000006}" Name="ChangeOutcome" StaticName="ChangeOutcome"
+                   DisplayName="Outcome" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>Successful</CHOICE>
+                <CHOICE>Failed</CHOICE>
+                <CHOICE>Rolled back</CHOICE>
+                <CHOICE>Partial</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A6B7C801-0012-0000-0000-000000000006}" Name="ChangeNotes" StaticName="ChangeNotes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: all columns, sorted by Planned Date descending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="ChangeID" />
+                <pnp:FieldRef Name="ChangeTitle" />
+                <pnp:FieldRef Name="ChangeType" />
+                <pnp:FieldRef Name="ChangeStatus" />
+                <pnp:FieldRef Name="RequestedBy" />
+                <pnp:FieldRef Name="ApprovedBy" />
+                <pnp:FieldRef Name="AffectedSystems" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="PlannedDate" />
+                <pnp:FieldRef Name="ImplementedDate" />
+                <pnp:FieldRef Name="ChangeOutcome" />
+                <pnp:FieldRef Name="ChangeNotes" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="PlannedDate" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Emergency Changes view -->
+            <pnp:View DisplayName="Emergency Changes" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="ChangeID" />
+                <pnp:FieldRef Name="ChangeTitle" />
+                <pnp:FieldRef Name="ChangeType" />
+                <pnp:FieldRef Name="ChangeStatus" />
+                <pnp:FieldRef Name="RequestedBy" />
+                <pnp:FieldRef Name="ApprovedBy" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="PlannedDate" />
+                <pnp:FieldRef Name="ImplementedDate" />
+                <pnp:FieldRef Name="ChangeOutcome" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Eq>
+                    <FieldRef Name="ChangeType" />
+                    <Value Type="Choice">Emergency</Value>
+                  </Eq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="PlannedDate" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Class 1 Changes view -->
+            <pnp:View DisplayName="Class 1 Changes" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="ChangeID" />
+                <pnp:FieldRef Name="ChangeTitle" />
+                <pnp:FieldRef Name="ChangeType" />
+                <pnp:FieldRef Name="ChangeStatus" />
+                <pnp:FieldRef Name="RequestedBy" />
+                <pnp:FieldRef Name="ApprovedBy" />
+                <pnp:FieldRef Name="AffectedSystems" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="PlannedDate" />
+                <pnp:FieldRef Name="ImplementedDate" />
+                <pnp:FieldRef Name="ChangeOutcome" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Eq>
+                    <FieldRef Name="CareImpactClass" />
+                    <Value Type="Choice">Class 1 — Direct</Value>
+                  </Eq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="PlannedDate" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 7: Incident Register
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="Incident Register"
+                          Description="IT incident register. Tracks all incidents by severity, care impact classification, notifiability under the Aged Care Act 2024, and resolution status."
+                          TemplateType="100"
+                          Url="Lists/Incident-Register"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A7B8C901-0001-0000-0000-000000000007}" Name="IncidentID" StaticName="IncidentID"
+                   DisplayName="Incident ID" Type="Text" Required="TRUE" MaxLength="20" />
+
+            <Field ID="{A7B8C901-0002-0000-0000-000000000007}" Name="IncidentTitle" StaticName="IncidentTitle"
+                   DisplayName="Title" Type="Text" Required="TRUE" MaxLength="255" />
+
+            <Field ID="{A7B8C901-0003-0000-0000-000000000007}" Name="IncidentCategory" StaticName="IncidentCategory"
+                   DisplayName="Category" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Cyber Security</CHOICE>
+                <CHOICE>Clinical Technology</CHOICE>
+                <CHOICE>Data Breach</CHOICE>
+                <CHOICE>Infrastructure</CHOICE>
+                <CHOICE>Vendor</CHOICE>
+                <CHOICE>Physical</CHOICE>
+                <CHOICE>Other</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A7B8C901-0004-0000-0000-000000000007}" Name="Severity" StaticName="Severity"
+                   DisplayName="Severity" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Critical</CHOICE>
+                <CHOICE>High</CHOICE>
+                <CHOICE>Medium</CHOICE>
+                <CHOICE>Low</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A7B8C901-0005-0000-0000-000000000007}" Name="IncidentStatus" StaticName="IncidentStatus"
+                   DisplayName="Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Open</CHOICE>
+                <CHOICE>In Progress</CHOICE>
+                <CHOICE>Resolved</CHOICE>
+                <CHOICE>Closed</CHOICE>
+                <CHOICE>Post-Incident Review</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A7B8C901-0006-0000-0000-000000000007}" Name="AffectedSystems" StaticName="AffectedSystems"
+                   DisplayName="Affected Systems" Type="Text" Required="FALSE" MaxLength="500" />
+
+            <Field ID="{A7B8C901-0007-0000-0000-000000000007}" Name="CareImpactClass" StaticName="CareImpactClass"
+                   DisplayName="Care Impact Class" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Class 1 — Direct</CHOICE>
+                <CHOICE>Class 2 — Indirect</CHOICE>
+                <CHOICE>Class 3 — Operational</CHOICE>
+                <CHOICE>None</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <!-- Notifiability under Aged Care Act 2024 -->
+            <Field ID="{A7B8C901-0008-0000-0000-000000000007}" Name="NotifiableIncident" StaticName="NotifiableIncident"
+                   DisplayName="Notifiable Incident (Aged Care Act)" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Yes</CHOICE>
+                <CHOICE>No</CHOICE>
+                <CHOICE>Under Assessment</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A7B8C901-0009-0000-0000-000000000007}" Name="DateDetected" StaticName="DateDetected"
+                   DisplayName="Date Detected" Type="DateTime" Required="TRUE" Format="DateOnly" />
+
+            <Field ID="{A7B8C901-0010-0000-0000-000000000007}" Name="DateResolved" StaticName="DateResolved"
+                   DisplayName="Date Resolved" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A7B8C901-0011-0000-0000-000000000007}" Name="RootCause" StaticName="RootCause"
+                   DisplayName="Root Cause" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+
+            <Field ID="{A7B8C901-0012-0000-0000-000000000007}" Name="LessonsLearned" StaticName="LessonsLearned"
+                   DisplayName="Lessons Learned" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+
+            <Field ID="{A7B8C901-0013-0000-0000-000000000007}" Name="IncidentOwner" StaticName="IncidentOwner"
+                   DisplayName="Incident Owner" Type="User" Required="TRUE" UserSelectionMode="0" />
+
+            <Field ID="{A7B8C901-0014-0000-0000-000000000007}" Name="IncidentNotes" StaticName="IncidentNotes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: all columns, sorted by Date Detected descending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="IncidentID" />
+                <pnp:FieldRef Name="IncidentTitle" />
+                <pnp:FieldRef Name="IncidentCategory" />
+                <pnp:FieldRef Name="Severity" />
+                <pnp:FieldRef Name="IncidentStatus" />
+                <pnp:FieldRef Name="AffectedSystems" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="NotifiableIncident" />
+                <pnp:FieldRef Name="DateDetected" />
+                <pnp:FieldRef Name="DateResolved" />
+                <pnp:FieldRef Name="RootCause" />
+                <pnp:FieldRef Name="LessonsLearned" />
+                <pnp:FieldRef Name="IncidentOwner" />
+                <pnp:FieldRef Name="IncidentNotes" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="DateDetected" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Open Incidents view -->
+            <pnp:View DisplayName="Open Incidents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="IncidentID" />
+                <pnp:FieldRef Name="IncidentTitle" />
+                <pnp:FieldRef Name="IncidentCategory" />
+                <pnp:FieldRef Name="Severity" />
+                <pnp:FieldRef Name="IncidentStatus" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="NotifiableIncident" />
+                <pnp:FieldRef Name="DateDetected" />
+                <pnp:FieldRef Name="IncidentOwner" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Or>
+                    <Eq>
+                      <FieldRef Name="IncidentStatus" />
+                      <Value Type="Choice">Open</Value>
+                    </Eq>
+                    <Eq>
+                      <FieldRef Name="IncidentStatus" />
+                      <Value Type="Choice">In Progress</Value>
+                    </Eq>
+                  </Or>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="Severity" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Notifiable Incidents view -->
+            <pnp:View DisplayName="Notifiable Incidents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="IncidentID" />
+                <pnp:FieldRef Name="IncidentTitle" />
+                <pnp:FieldRef Name="IncidentCategory" />
+                <pnp:FieldRef Name="Severity" />
+                <pnp:FieldRef Name="IncidentStatus" />
+                <pnp:FieldRef Name="CareImpactClass" />
+                <pnp:FieldRef Name="NotifiableIncident" />
+                <pnp:FieldRef Name="DateDetected" />
+                <pnp:FieldRef Name="DateResolved" />
+                <pnp:FieldRef Name="IncidentOwner" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <Eq>
+                    <FieldRef Name="NotifiableIncident" />
+                    <Value Type="Choice">Yes</Value>
+                  </Eq>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="DateDetected" Ascending="FALSE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+        <!-- ────────────────────────────────────────────────────
+             LIST 8: Training & Awareness Register
+             ──────────────────────────────────────────────────── -->
+        <pnp:ListInstance Title="Training &amp; Awareness Register"
+                          Description="Register of IT training and awareness modules including SCORM, phishing simulations, and policy acknowledgements. Tracks assignment, completion, and currency."
+                          TemplateType="100"
+                          Url="Lists/Training-Register"
+                          EnableVersioning="true"
+                          MinorVersionLimit="0"
+                          MaxVersionLimit="10"
+                          EnableAttachments="false"
+                          OnQuickLaunch="true">
+
+          <pnp:ContentTypeBindings>
+            <pnp:ContentTypeBinding ContentTypeID="0x01" Default="true" />
+          </pnp:ContentTypeBindings>
+
+          <pnp:Fields>
+            <Field ID="{A8B9CA01-0001-0000-0000-000000000008}" Name="ModuleTitle" StaticName="ModuleTitle"
+                   DisplayName="Module Title" Type="Text" Required="TRUE" MaxLength="255" />
+
+            <Field ID="{A8B9CA01-0002-0000-0000-000000000008}" Name="Audience" StaticName="Audience"
+                   DisplayName="Audience" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>All Staff</CHOICE>
+                <CHOICE>Clinical Staff</CHOICE>
+                <CHOICE>Administrative Staff</CHOICE>
+                <CHOICE>IT Team</CHOICE>
+                <CHOICE>Management</CHOICE>
+                <CHOICE>New Starters</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A8B9CA01-0003-0000-0000-000000000008}" Name="DeliveryMethod" StaticName="DeliveryMethod"
+                   DisplayName="Delivery Method" Type="Choice" Required="FALSE">
+              <CHOICES>
+                <CHOICE>SCORM / LMS</CHOICE>
+                <CHOICE>Classroom</CHOICE>
+                <CHOICE>Video</CHOICE>
+                <CHOICE>Policy Read and Acknowledge</CHOICE>
+                <CHOICE>Phishing Simulation</CHOICE>
+                <CHOICE>Other</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A8B9CA01-0004-0000-0000-000000000008}" Name="ModuleStatus" StaticName="ModuleStatus"
+                   DisplayName="Status" Type="Choice" Required="TRUE">
+              <CHOICES>
+                <CHOICE>Active</CHOICE>
+                <CHOICE>Inactive</CHOICE>
+                <CHOICE>Draft</CHOICE>
+              </CHOICES>
+            </Field>
+
+            <Field ID="{A8B9CA01-0005-0000-0000-000000000008}" Name="AssignedDate" StaticName="AssignedDate"
+                   DisplayName="Assigned Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A8B9CA01-0006-0000-0000-000000000008}" Name="DueDate" StaticName="DueDate"
+                   DisplayName="Due Date" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A8B9CA01-0007-0000-0000-000000000008}" Name="CompletionPercent" StaticName="CompletionPercent"
+                   DisplayName="Completion %" Type="Number" Required="FALSE" Min="0" Max="100" />
+
+            <Field ID="{A8B9CA01-0008-0000-0000-000000000008}" Name="LastUpdated" StaticName="LastUpdated"
+                   DisplayName="Last Updated" Type="DateTime" Required="FALSE" Format="DateOnly" />
+
+            <Field ID="{A8B9CA01-0009-0000-0000-000000000008}" Name="ContentOwner" StaticName="ContentOwner"
+                   DisplayName="Content Owner" Type="User" Required="FALSE" UserSelectionMode="0" />
+
+            <Field ID="{A8B9CA01-0010-0000-0000-000000000008}" Name="TrainingNotes" StaticName="TrainingNotes"
+                   DisplayName="Notes" Type="Note" Required="FALSE" NumLines="4" RichText="FALSE" />
+          </pnp:Fields>
+
+          <pnp:Views>
+            <!-- Default view: all columns, sorted by Due Date ascending -->
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="ModuleTitle" />
+                <pnp:FieldRef Name="Audience" />
+                <pnp:FieldRef Name="DeliveryMethod" />
+                <pnp:FieldRef Name="ModuleStatus" />
+                <pnp:FieldRef Name="AssignedDate" />
+                <pnp:FieldRef Name="DueDate" />
+                <pnp:FieldRef Name="CompletionPercent" />
+                <pnp:FieldRef Name="LastUpdated" />
+                <pnp:FieldRef Name="ContentOwner" />
+                <pnp:FieldRef Name="TrainingNotes" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <OrderBy>
+                  <FieldRef Name="DueDate" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+
+            <!-- Overdue: due date < today AND completion < 100 -->
+            <pnp:View DisplayName="Overdue" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+              <pnp:ViewFields>
+                <pnp:FieldRef Name="ModuleTitle" />
+                <pnp:FieldRef Name="Audience" />
+                <pnp:FieldRef Name="DeliveryMethod" />
+                <pnp:FieldRef Name="ModuleStatus" />
+                <pnp:FieldRef Name="DueDate" />
+                <pnp:FieldRef Name="CompletionPercent" />
+                <pnp:FieldRef Name="ContentOwner" />
+              </pnp:ViewFields>
+              <pnp:Query>
+                <Where>
+                  <And>
+                    <Lt>
+                      <FieldRef Name="DueDate" />
+                      <Value Type="DateTime"><Today /></Value>
+                    </Lt>
+                    <Lt>
+                      <FieldRef Name="CompletionPercent" />
+                      <Value Type="Number">100</Value>
+                    </Lt>
+                  </And>
+                </Where>
+                <OrderBy>
+                  <FieldRef Name="DueDate" Ascending="TRUE" />
+                </OrderBy>
+              </pnp:Query>
+            </pnp:View>
+          </pnp:Views>
+
+        </pnp:ListInstance>
+
+      </pnp:Lists>
+
+      <!-- ══════════════════════════════════════════════════════
+           PAGES
+           9 modern SharePoint pages — Article layout
+           Header colour: navy #1F3864 on all pages
+           ══════════════════════════════════════════════════════ -->
+      <pnp:ClientSidePages>
+
+        <!-- Page 1: Home — orientation / landing page, no list web parts -->
+        <pnp:ClientSidePage PageName="Home.aspx"
+                            Title="IT Governance, Risk &amp; Compliance"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;h2&gt;Welcome to the IT GRC site&lt;/h2&gt;&lt;p&gt;This site is the governance, risk and compliance hub for LHG&apos;s IT function. Use the left navigation to access each section. This site is managed by the GM Information Technology.&lt;/p&gt;&lt;p&gt;Sections: Executive Dashboard | Risk &amp;amp; Compliance | Policy, Standards &amp;amp; Principles | Projects &amp;amp; Programme | Cyber &amp;amp; Security | IT Operations &amp;amp; Architecture | Training &amp;amp; Awareness | Essential Eight Maturity&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 2: Executive Dashboard — Risk Register (Executive View) + Projects (Active) -->
+        <pnp:ClientSidePage PageName="Executive-Dashboard.aspx"
+                            Title="Executive Dashboard"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;Cyber risk posture, programme status, and the IT risk register at a glance. Audience: COO, Risk Committee, Board.&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <!-- IT Risk Register — Executive View (High and Critical only) -->
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: IT Risk Register — High &amp; Critical Risks (Executive View view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <!-- Projects & Programme — Active Projects view -->
+            <pnp:Section Order="3" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Projects &amp; Programme — Active Projects (Active Projects view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 3: Risk & Compliance -->
+        <pnp:ClientSidePage PageName="Risk-Compliance.aspx"
+                            Title="Risk &amp; Compliance"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;IT risk register, incident register, and escalation to the enterprise risk register. Audience: Risk Committee, IT team.&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: IT Risk Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="3" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Incident Register — Open Incidents (Open Incidents view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 4: Policy, Standards & Principles -->
+        <pnp:ClientSidePage PageName="Policy-Standards-Principles.aspx"
+                            Title="Policy, Standards &amp; Principles"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;Controlled IT policies, architecture principles, and standards with named owners, version control, and review cycles. Audience: IT team, Risk, All staff.&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Policy, Standards &amp; Principles Library (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 5: Projects & Programme -->
+        <pnp:ClientSidePage PageName="Projects-Programme.aspx"
+                            Title="Projects &amp; Programme"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;FY2026/27 delivery, RAG status, budget and the change pipeline. Audience: PMO, IT team, Exec.&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Projects &amp; Programme (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="3" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Change Log (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 6: Cyber & Security -->
+        <pnp:ClientSidePage PageName="Cyber-Security.aspx"
+                            Title="Cyber &amp; Security"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;Essential Eight maturity, vulnerability tracking, and incident posture. Audience: IT team, Risk, COO.&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Essential Eight Maturity — Assessment Summary (Assessment Summary view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="3" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Incident Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 7: IT Operations & Architecture -->
+        <pnp:ClientSidePage PageName="IT-Operations-Architecture.aspx"
+                            Title="IT Operations &amp; Architecture"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;CMDB, care impact classification, architecture documentation, and the change log. Audience: IT team, MSP (limited).&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: CMDB — Asset &amp; Configuration Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="3" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Change Log — Class 1 Changes (Class 1 Changes view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 8: Training & Awareness -->
+        <pnp:ClientSidePage PageName="Training-Awareness.aspx"
+                            Title="Training &amp; Awareness"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;SCORM modules, phishing resilience, and AI policy communications. Audience: All staff, IT team.&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Training &amp; Awareness Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+        <!-- Page 9: Essential Eight Maturity — standalone dedicated page -->
+        <pnp:ClientSidePage PageName="Essential-Eight-Maturity.aspx"
+                            Title="Essential Eight Maturity"
+                            PromoteAsNewsArticle="false"
+                            Overwrite="true"
+                            Layout="Article">
+          <pnp:Header Type="Custom" LayoutType="ColorBlock" ShowTopicHeader="false" TopicHeader="" TextAlignment="Left" />
+          <pnp:Sections>
+            <!-- Explanatory text web part above lists -->
+            <pnp:Section Order="1" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;This assessment uses the ACSC Essential Eight Maturity Model (0–3). Level 0 = not performed. Level 1 = partly aligned. Level 2 = mostly aligned. Level 3 = fully aligned. Target: Level 2 across all controls by end of FY2026/27.&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <!-- Primary: Assessment Summary — full width -->
+            <pnp:Section Order="2" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Essential Eight — Assessment Summary (Assessment Summary view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+            <!-- Secondary: Gaps Only — below -->
+            <pnp:Section Order="3" Type="OneColumn">
+              <pnp:Controls>
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
+                  <pnp:CanvasControlProperties>
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Essential Eight — Gaps Only (Not Met / In Progress) (Gaps Only view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
+                  </pnp:CanvasControlProperties>
+                </pnp:CanvasControl>
+              </pnp:Controls>
+            </pnp:Section>
+          </pnp:Sections>
+        </pnp:ClientSidePage>
+
+      </pnp:ClientSidePages>
+
+    </pnp:ProvisioningTemplate>
+  </pnp:Templates>
+
+</pnp:Provisioning>

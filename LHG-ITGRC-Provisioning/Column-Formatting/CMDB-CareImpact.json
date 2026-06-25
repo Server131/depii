@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json",
+  "elmType": "div",
+  "style": {
+    "display": "inline-block",
+    "border-radius": "20px",
+    "padding": "3px 12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "background-color": "=if(startsWith(@currentField, 'Class 1'), '#FBE3E1', if(startsWith(@currentField, 'Class 2'), '#FAEEDA', '#F0F0F0'))",
+    "color": "=if(startsWith(@currentField, 'Class 1'), '#B3261E', if(startsWith(@currentField, 'Class 2'), '#9A5E10', '#777777'))"
+  },
+  "txtContent": "@currentField"
+}
