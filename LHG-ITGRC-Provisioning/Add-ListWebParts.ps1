@@ -172,25 +172,21 @@ $cadenceHtml = @"
 </table>
 "@
 
-# ── Quick Links sidebar — pre-configured navigation items ─────────────────────
+# ── Navigation sidebar — Markdown link list (used on every content page right column)
+# The MarkDown web part serialises reliably; QuickLinks with nested hashtables does not.
 
-$qlItems = @(
-    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Risk-Compliance.aspx";             "title" = "Risk & Compliance"              }; "thumbnailType" = 2; "id" = 1; "description" = ""; "altText" = "" }
-    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Policy-Standards-Principles.aspx"; "title" = "Policy, Standards & Principles" }; "thumbnailType" = 2; "id" = 2; "description" = ""; "altText" = "" }
-    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Projects-Programme.aspx";          "title" = "Projects & Programme"           }; "thumbnailType" = 2; "id" = 3; "description" = ""; "altText" = "" }
-    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Cyber-Security.aspx";              "title" = "Cyber & Security"               }; "thumbnailType" = 2; "id" = 4; "description" = ""; "altText" = "" }
-    @{ "sourceItem" = @{ "url" = "$Base/SitePages/IT-Operations-Architecture.aspx";  "title" = "IT Operations & Architecture"   }; "thumbnailType" = 2; "id" = 5; "description" = ""; "altText" = "" }
-    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Training-Awareness.aspx";          "title" = "Training & Awareness"           }; "thumbnailType" = 2; "id" = 6; "description" = ""; "altText" = "" }
-    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Executive-Dashboard.aspx";         "title" = "Executive Dashboard"            }; "thumbnailType" = 2; "id" = 7; "description" = ""; "altText" = "" }
-)
+$navMd = @"
+**Quick links**
 
-$qlProps = @{
-    "isMigrated"          = $true
-    "layoutId"            = "List"
-    "shouldShowThumbnail" = $false
-    "dataProviderId"      = "QuickLinksDataProvider"
-    "items"               = $qlItems
-}
+- [Executive Dashboard]($Base/SitePages/Executive-Dashboard.aspx)
+- [Risk & Compliance]($Base/SitePages/Risk-Compliance.aspx)
+- [Policy, Standards & Principles]($Base/SitePages/Policy-Standards-Principles.aspx)
+- [Projects & Programme]($Base/SitePages/Projects-Programme.aspx)
+- [Cyber & Security]($Base/SitePages/Cyber-Security.aspx)
+- [IT Operations & Architecture]($Base/SitePages/IT-Operations-Architecture.aspx)
+- [Training & Awareness]($Base/SitePages/Training-Awareness.aspx)
+- [Essential Eight Maturity]($Base/SitePages/Essential-Eight-Maturity.aspx)
+"@
 
 Write-Ok "Shared content prepared."
 
@@ -201,18 +197,15 @@ function Clear-PageContent {
     try {
         $pg = Get-PnPPage -Identity $PageName -ErrorAction Stop
         # Try native ClearPage() first (exposed by PnP.Framework on the page object)
-        try {
-            $pg.ClearPage()
-            $pg.Save()
-            Write-Ok "Cleared $PageName"
-            return
-        } catch { }
+        try { $pg.ClearPage(); $pg.Save() } catch { }
         # Fallback: remove every control individually
         $ctrls = @($pg.Controls)
         foreach ($c in $ctrls) {
             Remove-PnPPageComponent -Page $PageName -InstanceId $c.InstanceId -Force -ErrorAction SilentlyContinue
         }
-        if ($ctrls.Count -gt 0) { Write-Ok "Cleared $($ctrls.Count) control(s) from $PageName" }
+        Write-Ok "Cleared $PageName"
+        # Remove the ColorBlock header set by the provisioning template — use a clean header
+        Set-PnPPage -Identity $PageName -HeaderLayoutType NoImage -ErrorAction SilentlyContinue
     } catch {
         Write-Warn "Could not clear ${PageName}: $($_.Exception.Message)"
     }
@@ -274,11 +267,11 @@ function Publish-Page {
 
 function Add-NavSidebar {
     param([string]$PageName, [int]$Section, [int]$Column)
-    Add-PnPPageWebPart -Page $PageName -DefaultWebPartType QuickLinks `
+    Add-PnPPageWebPart -Page $PageName -DefaultWebPartType MarkDown `
         -Section $Section -Column $Column `
-        -WebPartProperties $qlProps `
+        -WebPartProperties @{ "content" = $navMd } `
         -ErrorAction SilentlyContinue | Out-Null
-    Write-Ok "Quick Links sidebar → S$Section C$Column"
+    Write-Ok "Navigation sidebar → S$Section C$Column"
 }
 
 # ── STEP 4 — Rebuild each page ────────────────────────────────────────────────
