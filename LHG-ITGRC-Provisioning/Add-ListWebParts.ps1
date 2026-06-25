@@ -106,13 +106,17 @@ function New-KpiHtml {
     $colorBg = @{ Red="#B71C1C"; Amber="#8D4E00"; Green="#1B5E20"; Navy="#1F3864" }
     $cells = ($Tiles | Sort-Object { $_["KPISortOrder"] } | ForEach-Object {
         $bg = $colorBg[$_.KPIColor]
-        "<td style='background:$bg;border:8px solid #ffffff;padding:20px 22px;border-radius:8px;width:25%;vertical-align:top;'>" +
+        "<td style='background:$bg;padding:20px 22px;border-radius:8px;width:25%;vertical-align:top;'>" +
         "<div style='font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;'><span style='color:rgba(255,255,255,0.85);'>$($_.Title)</span></div>" +
         "<div style='font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;'><span style='color:#ffffff;'>$($_.KPIValue)</span></div>" +
         "<div style='font-size:12px;'><span style='color:rgba(255,255,255,0.75);'>$($_.KPICaption)</span></div>" +
         "</td>"
     }) -join ""
-    return "<table width='100%' style='border-collapse:collapse;margin:0;table-layout:fixed;'><tr>$cells</tr></table>"
+    # border-spacing on the TABLE (not a per-cell border) makes the gap — SharePoint's
+    # RTE strips inline `border` from <td> but preserves table-level border-spacing.
+    # Fallback if a tenant also strips this: insert <td style='width:8px'></td> spacer
+    # cells (no background) between tiles — the page background shows through as the gap.
+    return "<table width='100%' style='border-collapse:separate;border-spacing:8px 0;margin:0;table-layout:fixed;'><tr>$cells</tr></table>"
 }
 
 # ── Per-page KPI strips — page-specific status tiles (edit values as data changes) ─
