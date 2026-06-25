@@ -172,6 +172,24 @@ $cadenceHtml = @"
 </table>
 "@
 
+# ── Coloured callout banners (design's per-section info boxes) ────────────────
+# Each section in the design opens with a coloured callout, NOT KPI tiles.
+# (KPI tiles are an Executive-Dashboard-only element.)
+
+function New-Callout {
+    param([string]$Fill, [string]$Accent, [string]$Kicker, [string]$Body)
+    return @"
+<div style="background:$Fill;border-left:4px solid $Accent;padding:14px 18px;border-radius:4px;">
+  <div style="font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:$Accent;margin-bottom:6px;">$Kicker</div>
+  <div style="font-size:13.5px;line-height:1.6;color:#333333;">$Body</div>
+</div>
+"@
+}
+
+$calloutHome  = New-Callout "#FAEEDA" "#9A5E10" "Current state" "LHG has no formal GRC framework in place today. Cyber risk rating is currently <strong>High</strong>, driven by a CVSS 9.8 vulnerability in the nurse call infrastructure. The FY2026/27 IT programme establishes governance, uplifts Essential Eight maturity, and remediates critical risks."
+$calloutRisk  = New-Callout "#E1F5EE" "#0F6E56" "Key insight" "Aged-care technology dependency is a clinical governance risk. LHG runs a two-tier risk model &mdash; Tier&nbsp;1 IT risks escalate to the enterprise register when they materially threaten care delivery or compliance."
+$calloutCyber = New-Callout "#FBE3E1" "#B3261E" "Critical risk" "The nurse call infrastructure carries a CVSS&nbsp;9.8 vulnerability. A failure or compromise is a notifiable Serious Incident under Aged Care Quality &amp; Safety obligations. Remediation is the programme's top priority."
+
 # ── Navigation sidebar — Markdown link list (used on every content page right column)
 # The MarkDown web part serialises reliably; QuickLinks with nested hashtables does not.
 
@@ -279,6 +297,24 @@ function Add-NavSidebar {
 Write-Step "STEP 4 — Rebuilding page layouts"
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# Home
+#   S1 OneColumn      amber "Current state" callout
+#   S2 TwoColumnLeft  [Left] intro text   [Right] Quick Links
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Home.aspx" -ForegroundColor White
+Clear-PageContent "Home.aspx"
+
+Add-PnPPageSection -Page "Home.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "Home.aspx" 1 1 $calloutHome
+
+Add-PnPPageSection -Page "Home.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-TextWP    "Home.aspx" 2 1 "<p style='color:#555555;font-size:14px;margin:0;'>Welcome to the IT Governance, Risk &amp; Compliance portal for Lutheran Homes Group. Use the navigation to reach each programme area &mdash; risk, policy, projects, cyber, operations, and training.</p>"
+Add-NavSidebar "Home.aspx" 2 2
+
+Publish-Page "Home.aspx"
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # Executive Dashboard
 #   S1 OneColumn      subtitle text
 #   S2 OneColumn      4 KPI status tiles (HTML table)
@@ -320,6 +356,7 @@ Clear-PageContent "Risk-Compliance.aspx"
 
 Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Risk-Compliance.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Complete IT risk register and all open incidents. Manage risk ratings, escalations, and regulatory incident reporting.</p>"
+Add-TextWP "Risk-Compliance.aspx" 1 1 $calloutRisk
 
 Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Risk-Compliance.aspx" 2 1 "IT Risk Register" "All Items"
@@ -371,10 +408,11 @@ Add-ListWP "Projects-Programme.aspx" 3 1 "Change Log" "All Items"
 Publish-Page "Projects-Programme.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Cyber & Security
-#   S1 OneColumn      subtitle text
+# Cyber & Security  (single home for Essential Eight — matches design IA)
+#   S1 OneColumn      subtitle + red "Critical risk" callout
 #   S2 TwoColumnLeft  [Left] Essential Eight — Assessment Summary   [Right] Quick Links
-#   S3 OneColumn      Incident Register — All Items
+#   S3 OneColumn      Essential Eight — Gaps Only
+#   S4 OneColumn      Incident Register — All Items
 # ═══════════════════════════════════════════════════════════════════════════════
 
 Write-Host "`n  ── Cyber-Security.aspx" -ForegroundColor White
@@ -382,13 +420,17 @@ Clear-PageContent "Cyber-Security.aspx"
 
 Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Cyber-Security.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Essential Eight maturity assessment and cyber security incident register. Monitor ACSC compliance posture and security events.</p>"
+Add-TextWP "Cyber-Security.aspx" 1 1 $calloutCyber
 
 Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Cyber-Security.aspx" 2 1 "Essential Eight Maturity" "Assessment Summary"
 Add-NavSidebar "Cyber-Security.aspx" 2 2
 
 Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
-Add-ListWP "Cyber-Security.aspx" 3 1 "Incident Register" "All Items"
+Add-ListWP "Cyber-Security.aspx" 3 1 "Essential Eight Maturity" "Gaps Only"
+
+Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate OneColumn     -Order 4 | Out-Null
+Add-ListWP "Cyber-Security.aspx" 4 1 "Incident Register" "All Items"
 
 Publish-Page "Cyber-Security.aspx"
 
@@ -433,26 +475,29 @@ Add-NavSidebar "Training-Awareness.aspx" 2 2
 Publish-Page "Training-Awareness.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Essential Eight Maturity
-#   S1 OneColumn      subtitle text
-#   S2 TwoColumnLeft  [Left] Essential Eight — Assessment Summary   [Right] Quick Links
-#   S3 OneColumn      Essential Eight — Gaps Only
+# STEP 5 — Remove the standalone Essential Eight nav item
+#   The design has 8 sections only; Essential Eight lives on Cyber & Security.
+#   The provisioning template added a 9th page/nav node — remove it from the
+#   left navigation so E8 no longer appears twice. (The page itself is left in
+#   place but unlinked; delete it manually from Site Contents if desired.)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-Write-Host "`n  ── Essential-Eight-Maturity.aspx" -ForegroundColor White
-Clear-PageContent "Essential-Eight-Maturity.aspx"
-
-Add-PnPPageSection -Page "Essential-Eight-Maturity.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
-Add-TextWP "Essential-Eight-Maturity.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>ACSC Essential Eight maturity assessment register. Track current vs. target maturity levels and identify gaps for uplift planning.</p>"
-
-Add-PnPPageSection -Page "Essential-Eight-Maturity.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
-Add-ListWP    "Essential-Eight-Maturity.aspx" 2 1 "Essential Eight Maturity" "Assessment Summary"
-Add-NavSidebar "Essential-Eight-Maturity.aspx" 2 2
-
-Add-PnPPageSection -Page "Essential-Eight-Maturity.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
-Add-ListWP "Essential-Eight-Maturity.aspx" 3 1 "Essential Eight Maturity" "Gaps Only"
-
-Publish-Page "Essential-Eight-Maturity.aspx"
+Write-Step "STEP 5 — Removing duplicate Essential Eight nav item"
+try {
+    $nodes = Get-PnPNavigationNode -Location QuickLaunch -ErrorAction Stop
+    $target = $nodes | Where-Object { $_.Title -match "Essential Eight" }
+    if ($target) {
+        foreach ($n in $target) {
+            Remove-PnPNavigationNode -Identity $n.Id -Force -ErrorAction Stop
+            Write-Ok "Removed nav node: $($n.Title)"
+        }
+    } else {
+        Write-Warn "No 'Essential Eight' nav node found (already removed)."
+    }
+} catch {
+    Write-Warn "Could not remove nav node: $($_.Exception.Message)"
+    Write-Warn "Remove manually: Edit left navigation > '...' next to Essential Eight Maturity > Remove."
+}
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 
@@ -468,10 +513,16 @@ Write-Host "    Left 67%   — IT Risk Register (Executive View, High & Critical
 Write-Host "    Right 33%  — Governance Cadence panel + Quick Links to all sections" -ForegroundColor Gray
 Write-Host "    Full width — Projects & Programme (Active Projects)" -ForegroundColor Gray
 Write-Host ""
-Write-Host "  All other pages: primary list left (67%), Quick Links sidebar right (33%)." -ForegroundColor Gray
+Write-Host "  All other pages: coloured callout + primary list left (67%), nav sidebar right (33%)." -ForegroundColor Gray
+Write-Host "  Essential Eight now appears ONLY on Cyber & Security (duplicate nav item removed)." -ForegroundColor Gray
 Write-Host ""
-Write-Host "  To update KPI tile values when risk posture changes:" -ForegroundColor White
-Write-Host "    Edit page > click the coloured tile area > update HIGH / IN PROGRESS / 3 / etc." -ForegroundColor Gray
+Write-Host "  To update the 4 KPI tile values on the Executive Dashboard:" -ForegroundColor White
+Write-Host "    Option A (in SharePoint, no re-run):" -ForegroundColor Gray
+Write-Host "      Open Executive Dashboard > Edit (top right) > click the coloured KPI tile block >" -ForegroundColor Gray
+Write-Host "      the toolbar 'Edit HTML' (</>) lets you change HIGH / IN PROGRESS / ON TRACK / 3" -ForegroundColor Gray
+Write-Host "      and the sub-captions, then Republish." -ForegroundColor Gray
+Write-Host "    Option B (re-run this script): edit the \$kpiHtml block near the top of this" -ForegroundColor Gray
+Write-Host "      file, then run .\Add-ListWebParts.ps1 again (it clears and rebuilds safely)." -ForegroundColor Gray
 Write-Host "    Or re-run this script after editing the `$kpiHtml block at the top." -ForegroundColor Gray
 Write-Host ""
 Write-Host "  Remaining manual steps:" -ForegroundColor White
