@@ -98,6 +98,61 @@ Write-Step "STEP 3 — Preparing shared web part content"
 
 $Base = $SiteUrl.TrimEnd('/')
 
+# ── Helper: build a 4-tile KPI strip from an array of KPI hashtables ──────────
+# Coloured <td> backgrounds + white 8px border (border = the inter-tile gap).
+# Text colour applied via <span> so it survives SharePoint's HTML sanitisation.
+function New-KpiHtml {
+    param([array]$Tiles)
+    $colorBg = @{ Red="#B71C1C"; Amber="#8D4E00"; Green="#1B5E20"; Navy="#1F3864" }
+    $cells = ($Tiles | Sort-Object { $_["KPISortOrder"] } | ForEach-Object {
+        $bg = $colorBg[$_.KPIColor]
+        "<td style='background:$bg;border:8px solid #ffffff;padding:20px 22px;border-radius:8px;width:25%;vertical-align:top;'>" +
+        "<div style='font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;'><span style='color:rgba(255,255,255,0.85);'>$($_.Title)</span></div>" +
+        "<div style='font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;'><span style='color:#ffffff;'>$($_.KPIValue)</span></div>" +
+        "<div style='font-size:12px;'><span style='color:rgba(255,255,255,0.75);'>$($_.KPICaption)</span></div>" +
+        "</td>"
+    }) -join ""
+    return "<table width='100%' style='border-collapse:collapse;margin:0;table-layout:fixed;'><tr>$cells</tr></table>"
+}
+
+# ── Per-page KPI strips — page-specific status tiles (edit values as data changes) ─
+$kpiRisk = @(
+    @{ Title="Open Risks";       KPIValue="12";   KPIColor="Navy";  KPICaption="Across all tiers";        KPISortOrder=1 }
+    @{ Title="High / Critical";  KPIValue="3";    KPIColor="Red";   KPICaption="Tier 1 escalated";        KPISortOrder=2 }
+    @{ Title="Open Incidents";   KPIValue="2";    KPIColor="Amber"; KPICaption="1 notifiable";            KPISortOrder=3 }
+    @{ Title="Reviews Overdue";  KPIValue="1";    KPIColor="Amber"; KPICaption="Risk register cycle";     KPISortOrder=4 }
+)
+$kpiPolicy = @(
+    @{ Title="Total Policies";   KPIValue="18";   KPIColor="Navy";  KPICaption="Standards & principles";  KPISortOrder=1 }
+    @{ Title="Approved";         KPIValue="11";   KPIColor="Green"; KPICaption="Current & in force";      KPISortOrder=2 }
+    @{ Title="Under Review";     KPIValue="5";    KPIColor="Amber"; KPICaption="In draft / consultation"; KPISortOrder=3 }
+    @{ Title="Overdue Review";   KPIValue="2";    KPIColor="Red";   KPICaption="Past review date";        KPISortOrder=4 }
+)
+$kpiProjects = @(
+    @{ Title="Active Projects";  KPIValue="3";    KPIColor="Navy";  KPICaption="FY26/27 programme";       KPISortOrder=1 }
+    @{ Title="On Track";         KPIValue="1";    KPIColor="Green"; KPICaption="Green RAG";               KPISortOrder=2 }
+    @{ Title="At Risk";          KPIValue="2";    KPIColor="Amber"; KPICaption="Pending budget";          KPISortOrder=3 }
+    @{ Title="Class 1 Changes";  KPIValue="4";    KPIColor="Red";   KPICaption="Awaiting CAB";            KPISortOrder=4 }
+)
+$kpiCyber = @(
+    @{ Title="E8 Maturity";      KPIValue="ML1";  KPIColor="Amber"; KPICaption="Target ML2 by FY27";      KPISortOrder=1 }
+    @{ Title="Controls Met";     KPIValue="5/8";  KPIColor="Amber"; KPICaption="Essential Eight";         KPISortOrder=2 }
+    @{ Title="Critical Gaps";    KPIValue="3";    KPIColor="Red";   KPICaption="Patch & MFA priority";    KPISortOrder=3 }
+    @{ Title="Open Incidents";   KPIValue="2";    KPIColor="Navy";  KPICaption="Under investigation";     KPISortOrder=4 }
+)
+$kpiITOps = @(
+    @{ Title="Total Assets";     KPIValue="142";  KPIColor="Navy";  KPICaption="CMDB registered";         KPISortOrder=1 }
+    @{ Title="Class 1 Systems";  KPIValue="9";    KPIColor="Red";   KPICaption="Clinical-critical";       KPISortOrder=2 }
+    @{ Title="End of Life";      KPIValue="7";    KPIColor="Amber"; KPICaption="Replacement planned";     KPISortOrder=3 }
+    @{ Title="Uptime";           KPIValue="99.6%";KPIColor="Green"; KPICaption="Class 1 SLA";             KPISortOrder=4 }
+)
+$kpiTraining = @(
+    @{ Title="Completion";       KPIValue="87%";  KPIColor="Green"; KPICaption="Mandatory awareness";     KPISortOrder=1 }
+    @{ Title="Outstanding";      KPIValue="14";   KPIColor="Amber"; KPICaption="Staff incomplete";        KPISortOrder=2 }
+    @{ Title="Overdue";          KPIValue="3";    KPIColor="Red";   KPICaption="Past due date";           KPISortOrder=3 }
+    @{ Title="Phishing Fails";   KPIValue="6%";   KPIColor="Navy";  KPICaption="Last simulation";         KPISortOrder=4 }
+)
+
 # ── STEP 3a: GRC KPIs list — values stored here; edit items or use Power Automate
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -130,16 +185,7 @@ try {
         Write-Ok "KPI: $($kpi.Title) = $($kpi.KPIValue)"
     }
 
-    $colorBg = @{ Red="#B71C1C"; Amber="#8D4E00"; Green="#1B5E20"; Navy="#1F3864" }
-    $cells = ($kpiData | Sort-Object { $_["KPISortOrder"] } | ForEach-Object {
-        $bg = $colorBg[$_.KPIColor]
-        "<td style='background:$bg;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;'>" +
-        "<div style='font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;'><span style='color:rgba(255,255,255,0.85);'>$($_.Title)</span></div>" +
-        "<div style='font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;'><span style='color:#ffffff;'>$($_.KPIValue)</span></div>" +
-        "<div style='font-size:12px;'><span style='color:rgba(255,255,255,0.75);'>$($_.KPICaption)</span></div>" +
-        "</td>"
-    }) -join ""
-    $kpiHtml = "<table width='100%' style='border-collapse:separate;border-spacing:6px 0;margin:0;table-layout:fixed;'><tr>$cells</tr></table>"
+    $kpiHtml = New-KpiHtml $kpiData
     Write-Ok "KPI HTML generated from list data."
 } catch {
     Write-Warn "GRC KPIs setup: $($_.Exception.Message)"
@@ -330,6 +376,7 @@ Clear-PageContent "Home.aspx"
 
 Add-PnPPageSection -Page "Home.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Home.aspx" 1 1 $calloutHome
+Add-TextWP "Home.aspx" 1 1 $kpiHtml
 
 Add-PnPPageSection -Page "Home.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-TextWP    "Home.aspx" 2 1 "<p style='color:#555555;font-size:14px;margin:0;'>Welcome to the IT Governance, Risk &amp; Compliance portal for Lutheran Homes Group. Use the navigation to reach each programme area &mdash; risk, policy, projects, cyber, operations, and training.</p>"
@@ -377,6 +424,7 @@ Clear-PageContent "Risk-Compliance.aspx"
 Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Risk-Compliance.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Complete IT risk register and all open incidents. Manage risk ratings, escalations, and regulatory incident reporting.</p>"
 Add-TextWP "Risk-Compliance.aspx" 1 1 $calloutRisk
+Add-TextWP "Risk-Compliance.aspx" 1 1 (New-KpiHtml $kpiRisk)
 
 Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Risk-Compliance.aspx" 2 1 "IT Risk Register" "All Items"
@@ -399,6 +447,7 @@ Clear-PageContent "Policy-Standards-Principles.aspx"
 Add-PnPPageSection -Page "Policy-Standards-Principles.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Policy-Standards-Principles.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Authoritative library of IT policies, standards, and design principles. Track status, review cycles, and ownership.</p>"
 Add-TextWP "Policy-Standards-Principles.aspx" 1 1 $calloutPolicy
+Add-TextWP "Policy-Standards-Principles.aspx" 1 1 (New-KpiHtml $kpiPolicy)
 
 Add-PnPPageSection -Page "Policy-Standards-Principles.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Policy-Standards-Principles.aspx" 2 1 "Policy, Standards & Principles Library" "All Items"
@@ -419,6 +468,7 @@ Clear-PageContent "Projects-Programme.aspx"
 Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Projects-Programme.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>IT programme portfolio, project status, and the change log. Track RAG status, milestones, and Class 1/2 changes.</p>"
 Add-TextWP "Projects-Programme.aspx" 1 1 $calloutProjects
+Add-TextWP "Projects-Programme.aspx" 1 1 (New-KpiHtml $kpiProjects)
 
 Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Projects-Programme.aspx" 2 1 "Projects & Programme" "All Items"
@@ -443,6 +493,7 @@ Clear-PageContent "Cyber-Security.aspx"
 Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Cyber-Security.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Essential Eight maturity assessment and cyber security incident register. Monitor ACSC compliance posture and security events.</p>"
 Add-TextWP "Cyber-Security.aspx" 1 1 $calloutCyber
+Add-TextWP "Cyber-Security.aspx" 1 1 (New-KpiHtml $kpiCyber)
 
 Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Cyber-Security.aspx" 2 1 "Essential Eight Maturity" "Assessment Summary"
@@ -469,6 +520,7 @@ Clear-PageContent "IT-Operations-Architecture.aspx"
 Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "IT-Operations-Architecture.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>CMDB asset and configuration register, and Class 1 change log. Manage infrastructure inventory, lifecycle status, and change control.</p>"
 Add-TextWP "IT-Operations-Architecture.aspx" 1 1 $calloutITOps
+Add-TextWP "IT-Operations-Architecture.aspx" 1 1 (New-KpiHtml $kpiITOps)
 
 Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "IT-Operations-Architecture.aspx" 2 1 "CMDB — Asset & Configuration Register" "All Items"
@@ -491,6 +543,7 @@ Clear-PageContent "Training-Awareness.aspx"
 Add-PnPPageSection -Page "Training-Awareness.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Training-Awareness.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>IT security training and awareness register. Track mandatory training, completion rates, and staff acknowledgements.</p>"
 Add-TextWP "Training-Awareness.aspx" 1 1 $calloutTraining
+Add-TextWP "Training-Awareness.aspx" 1 1 (New-KpiHtml $kpiTraining)
 
 Add-PnPPageSection -Page "Training-Awareness.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Training-Awareness.aspx" 2 1 "Training & Awareness Register" "All Items"
