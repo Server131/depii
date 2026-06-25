@@ -25,6 +25,11 @@ $ScriptRoot     = $PSScriptRoot
 $TemplateFile   = Join-Path $ScriptRoot "LHG-ITGRC-Provisioning.xml"
 $FormattingDir  = Join-Path $ScriptRoot "Column-Formatting"
 
+# Client ID of the Entra ID app registration used for authentication.
+# The app must have SharePoint > Sites.FullControl.All (application permission, admin-consented).
+# Leave empty to use the PnP Management Shell default app registration.
+$ClientId       = ""   # e.g. "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
 # Test site — uncomment to target a staging environment instead of production
 # $SiteUrl = "https://lutheranhomesgroup.sharepoint.com/sites/itgovernance-test/"
 
@@ -141,7 +146,12 @@ Write-Step "STEP 3 — Connecting to SharePoint Online"
 Write-Host "  Target: $SiteUrl" -ForegroundColor Gray
 
 try {
-    Connect-PnPOnline -Url $SiteUrl -Interactive -ErrorAction Stop
+    if ($ClientId -ne "") {
+        Write-Host "  Using app registration: $ClientId" -ForegroundColor Gray
+        Connect-PnPOnline -Url $SiteUrl -Interactive -ClientId $ClientId -ErrorAction Stop
+    } else {
+        Connect-PnPOnline -Url $SiteUrl -Interactive -ErrorAction Stop
+    }
     Write-Success "Connected to $SiteUrl"
 }
 catch {
