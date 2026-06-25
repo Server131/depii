@@ -132,7 +132,10 @@ try {
 
     # Row formatter — 4 coloured horizontal tiles; CSS via list formatter avoids
     # the text-web-part colour-sanitisation issue that made text appear black.
-    $kpiFmt = '{"$schema":"https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json","hideColumnHeader":true,"hideSelection":true,"rowFormatter":{"elmType":"div","style":{"display":"inline-block","width":"calc(25% - 8px)","margin":"4px","padding":"20px 22px","border-radius":"4px","vertical-align":"top","box-sizing":"border-box","background-color":"=if([$KPIColor]==\'\'Red\'\',\'\'#B71C1C\'\',if([$KPIColor]==\'\'Amber\'\',\'\'#8D4E00\'\',if([$KPIColor]==\'\'Green\'\',\'\'#1B5E20\'\',\'\'#1F3864\'\')))"},"children":[{"elmType":"div","style":{"font-size":"10px","font-weight":"700","letter-spacing":"1.5px","text-transform":"uppercase","color":"rgba(255,255,255,0.85)","margin-bottom":"6px"},"txtContent":"[$Title]"},{"elmType":"div","style":{"font-size":"30px","font-weight":"700","line-height":"1.1","color":"#ffffff","margin-bottom":"5px"},"txtContent":"[$KPIValue]"},{"elmType":"div","style":{"font-size":"12px","color":"rgba(255,255,255,0.75)"},"txtContent":"[$KPICaption]"}]}}'
+    # Literal here-string (@' '@): single quotes inside need no escaping.
+    $kpiFmt = @'
+{"$schema":"https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json","hideColumnHeader":true,"hideSelection":true,"rowFormatter":{"elmType":"div","style":{"display":"inline-block","width":"calc(25% - 8px)","margin":"4px","padding":"20px 22px","border-radius":"4px","vertical-align":"top","box-sizing":"border-box","background-color":"=if([$KPIColor]=='Red','#B71C1C',if([$KPIColor]=='Amber','#8D4E00',if([$KPIColor]=='Green','#1B5E20','#1F3864')))"},"children":[{"elmType":"div","style":{"font-size":"10px","font-weight":"700","letter-spacing":"1.5px","text-transform":"uppercase","color":"rgba(255,255,255,0.85)","margin-bottom":"6px"},"txtContent":"[$Title]"},{"elmType":"div","style":{"font-size":"30px","font-weight":"700","line-height":"1.1","color":"#ffffff","margin-bottom":"5px"},"txtContent":"[$KPIValue]"},{"elmType":"div","style":{"font-size":"12px","color":"rgba(255,255,255,0.75)"},"txtContent":"[$KPICaption]"}]}}
+'@
 
     $ctx = Get-PnPContext
     $cList = $ctx.Web.Lists.GetByTitle($kpiListName)
