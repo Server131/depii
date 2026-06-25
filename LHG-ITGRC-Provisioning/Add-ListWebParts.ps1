@@ -130,20 +130,17 @@ try {
         Write-Ok "KPI: $($kpi.Title) = $($kpi.KPIValue)"
     }
 
-    # Row formatter — 4 coloured horizontal tiles; CSS via list formatter avoids
-    # the text-web-part colour-sanitisation issue that made text appear black.
-    # Literal here-string (@' '@): single quotes inside need no escaping.
-    $kpiFmt = @'
-{"$schema":"https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json","hideColumnHeader":true,"hideSelection":true,"rowFormatter":{"elmType":"div","style":{"display":"inline-block","width":"calc(25% - 8px)","margin":"4px","padding":"20px 22px","border-radius":"4px","vertical-align":"top","box-sizing":"border-box","background-color":"=if([$KPIColor]=='Red','#B71C1C',if([$KPIColor]=='Amber','#8D4E00',if([$KPIColor]=='Green','#1B5E20','#1F3864')))"},"children":[{"elmType":"div","style":{"font-size":"10px","font-weight":"700","letter-spacing":"1.5px","text-transform":"uppercase","color":"rgba(255,255,255,0.85)","margin-bottom":"6px"},"txtContent":"[$Title]"},{"elmType":"div","style":{"font-size":"30px","font-weight":"700","line-height":"1.1","color":"#ffffff","margin-bottom":"5px"},"txtContent":"[$KPIValue]"},{"elmType":"div","style":{"font-size":"12px","color":"rgba(255,255,255,0.75)"},"txtContent":"[$KPICaption]"}]}}
-'@
-
-    $ctx = Get-PnPContext
-    $cList = $ctx.Web.Lists.GetByTitle($kpiListName)
-    $cView = $cList.Views.GetByTitle("All Items")
-    $ctx.Load($cView); $ctx.ExecuteQuery()
-    $cView.CustomFormatter = $kpiFmt
-    $cView.Update(); $ctx.ExecuteQuery()
-    Write-Ok "KPI tile row formatter applied (white text, coloured tiles)."
+    $colorBg = @{ Red="#B71C1C"; Amber="#8D4E00"; Green="#1B5E20"; Navy="#1F3864" }
+    $cells = ($kpiData | Sort-Object { $_["KPISortOrder"] } | ForEach-Object {
+        $bg = $colorBg[$_.KPIColor]
+        "<td style='background:$bg;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;'>" +
+        "<div style='font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;'><span style='color:rgba(255,255,255,0.85);'>$($_.Title)</span></div>" +
+        "<div style='font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;'><span style='color:#ffffff;'>$($_.KPIValue)</span></div>" +
+        "<div style='font-size:12px;'><span style='color:rgba(255,255,255,0.75);'>$($_.KPICaption)</span></div>" +
+        "</td>"
+    }) -join ""
+    $kpiHtml = "<table width='100%' style='border-collapse:separate;border-spacing:6px 0;margin:0;table-layout:fixed;'><tr>$cells</tr></table>"
+    Write-Ok "KPI HTML generated from list data."
 } catch {
     Write-Warn "GRC KPIs setup: $($_.Exception.Message)"
 }
@@ -356,7 +353,7 @@ Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn  
 Add-TextWP "Executive-Dashboard.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Cyber risk posture, programme status, and the IT risk register at a glance.&nbsp; Audience: COO, Risk Committee, Board.</p>"
 
 Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn    -Order 2 | Out-Null
-Add-ListWP  "Executive-Dashboard.aspx" 2 1 "GRC KPIs" "All Items"
+Add-TextWP  "Executive-Dashboard.aspx" 2 1 $kpiHtml
 
 Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate TwoColumnLeft -Order 3 | Out-Null
 Add-ListWP  "Executive-Dashboard.aspx" 3 1 "IT Risk Register" "Executive View"
