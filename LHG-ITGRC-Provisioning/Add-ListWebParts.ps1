@@ -98,79 +98,99 @@ Write-Step "STEP 3 — Preparing shared web part content"
 
 $Base = $SiteUrl.TrimEnd('/')
 
-# ── KPI status tiles for Executive Dashboard ─────────────────────────────────
-# Edit the value and subtitle text here when risk posture or project count changes.
+# ── STEP 3a: GRC KPIs list — values stored here; edit items or use Power Automate
+# ─────────────────────────────────────────────────────────────────────────────
 
-$kpiHtml = @"
-<table width="100%" style="border-collapse:separate;border-spacing:6px 0;margin:0;table-layout:fixed;">
-  <tr>
-    <td style="background:#B71C1C;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Cyber Risk Rating</div>
-      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">HIGH</div>
-      <div style="font-size:12px;opacity:.75;">Filtering &amp; nurse call gaps</div>
-    </td>
-    <td style="background:#8D4E00;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Programme Status</div>
-      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">IN PROGRESS</div>
-      <div style="font-size:12px;opacity:.75;">FY26/27 cyber uplift</div>
-    </td>
-    <td style="background:#1B5E20;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Budget Status</div>
-      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">ON TRACK</div>
-      <div style="font-size:12px;opacity:.75;">Within approved envelope</div>
-    </td>
-    <td style="background:#1F3864;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Active Projects</div>
-      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">3</div>
-      <div style="font-size:12px;opacity:.75;">2 pending budget</div>
-    </td>
-  </tr>
-</table>
-"@
+Write-Step "STEP 3a — Setting up GRC KPIs list"
 
-# ── Governance Cadence panel for Executive Dashboard right column ─────────────
-# Edit dates each quarter.
+$kpiListName = "GRC KPIs"
+try {
+    $kpiList = Get-PnPList -Identity $kpiListName -ErrorAction SilentlyContinue
+    if (-not $kpiList) {
+        Write-Host "    Creating $kpiListName..." -NoNewline
+        $kpiList = New-PnPList -Title $kpiListName -Template GenericList -OnQuickLaunch:$false -ErrorAction Stop
+        Add-PnPField -List $kpiListName -DisplayName "Value"      -InternalName "KPIValue"     -Type Text   -AddToDefaultView | Out-Null
+        Add-PnPField -List $kpiListName -DisplayName "Color"      -InternalName "KPIColor"     -Type Choice -Choices @("Red","Amber","Green","Navy") -AddToDefaultView | Out-Null
+        Add-PnPField -List $kpiListName -DisplayName "Caption"    -InternalName "KPICaption"   -Type Text   -AddToDefaultView | Out-Null
+        Add-PnPField -List $kpiListName -DisplayName "Sort Order" -InternalName "KPISortOrder" -Type Number -AddToDefaultView | Out-Null
+        Write-Host " created." -ForegroundColor Green
+    } else { Write-Ok "$kpiListName list exists — updating items." }
 
-$cadenceHtml = @"
-<div style="font-size:14px;font-weight:600;color:#1F3864;margin:0 0 10px;">Governance cadence</div>
-<table width="100%" style="border-collapse:collapse;font-size:13px;">
-  <tr style="border-bottom:1px solid #eeeeee;">
-    <td style="padding:10px 0 10px;">
-      <div style="font-weight:600;color:#222222;">GM IT + COO 1:1</div>
-      <div style="font-size:11px;color:#999999;margin-top:2px;">Monthly</div>
-    </td>
-    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">1 Jul 2026</td>
-  </tr>
-  <tr style="border-bottom:1px solid #eeeeee;">
-    <td style="padding:10px 0 10px;">
-      <div style="font-weight:600;color:#222222;">Board / Risk Committee report</div>
-      <div style="font-size:11px;color:#999999;margin-top:2px;">Bimonthly</div>
-    </td>
-    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">14 Jul 2026</td>
-  </tr>
-  <tr style="border-bottom:1px solid #eeeeee;">
-    <td style="padding:10px 0 10px;">
-      <div style="font-weight:600;color:#222222;">IT risk register review</div>
-      <div style="font-size:11px;color:#999999;margin-top:2px;">Quarterly</div>
-    </td>
-    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">30 Sep 2026</td>
-  </tr>
-  <tr style="border-bottom:1px solid #eeeeee;">
-    <td style="padding:10px 0 10px;">
-      <div style="font-weight:600;color:#222222;">Essential Eight self-assessment</div>
-      <div style="font-size:11px;color:#999999;margin-top:2px;">Quarterly</div>
-    </td>
-    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">30 Sep 2026</td>
-  </tr>
-  <tr>
-    <td style="padding:10px 0 10px;">
-      <div style="font-weight:600;color:#222222;">MSP performance review</div>
-      <div style="font-size:11px;color:#999999;margin-top:2px;">Quarterly</div>
-    </td>
-    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">15 Jul 2026</td>
-  </tr>
-</table>
-"@
+    # ── KPI VALUES — edit these (or update via Power Automate) ──────────────────
+    $kpiData = @(
+        @{ Title="Cyber Risk Rating"; KPIValue="HIGH";        KPIColor="Red";   KPICaption="Filtering & nurse call gaps";  KPISortOrder=1 }
+        @{ Title="Programme Status";  KPIValue="IN PROGRESS"; KPIColor="Amber"; KPICaption="FY26/27 cyber uplift";         KPISortOrder=2 }
+        @{ Title="Budget Status";     KPIValue="ON TRACK";    KPIColor="Green"; KPICaption="Within approved envelope";     KPISortOrder=3 }
+        @{ Title="Active Projects";   KPIValue="3";           KPIColor="Navy";  KPICaption="2 pending budget";             KPISortOrder=4 }
+    )
+    foreach ($kpi in $kpiData) {
+        $hit = Get-PnPListItem -List $kpiListName -Query "<View><Query><Where><Eq><FieldRef Name='Title'/><Value Type='Text'>$($kpi.Title)</Value></Eq></Where></Query></View>" -ErrorAction SilentlyContinue
+        if ($hit) { Set-PnPListItem -List $kpiListName -Identity $hit[0].Id -Values $kpi -ErrorAction SilentlyContinue | Out-Null }
+        else       { Add-PnPListItem -List $kpiListName -Values $kpi -ErrorAction Stop | Out-Null }
+        Write-Ok "KPI: $($kpi.Title) = $($kpi.KPIValue)"
+    }
+
+    # Row formatter — 4 coloured horizontal tiles; CSS via list formatter avoids
+    # the text-web-part colour-sanitisation issue that made text appear black.
+    $kpiFmt = '{"$schema":"https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.schema.json","hideColumnHeader":true,"hideSelection":true,"rowFormatter":{"elmType":"div","style":{"display":"inline-block","width":"calc(25% - 8px)","margin":"4px","padding":"20px 22px","border-radius":"4px","vertical-align":"top","box-sizing":"border-box","background-color":"=if([$KPIColor]==\'\'Red\'\',\'\'#B71C1C\'\',if([$KPIColor]==\'\'Amber\'\',\'\'#8D4E00\'\',if([$KPIColor]==\'\'Green\'\',\'\'#1B5E20\'\',\'\'#1F3864\'\')))"},"children":[{"elmType":"div","style":{"font-size":"10px","font-weight":"700","letter-spacing":"1.5px","text-transform":"uppercase","color":"rgba(255,255,255,0.85)","margin-bottom":"6px"},"txtContent":"[$Title]"},{"elmType":"div","style":{"font-size":"30px","font-weight":"700","line-height":"1.1","color":"#ffffff","margin-bottom":"5px"},"txtContent":"[$KPIValue]"},{"elmType":"div","style":{"font-size":"12px","color":"rgba(255,255,255,0.75)"},"txtContent":"[$KPICaption]"}]}}'
+
+    $ctx = Get-PnPContext
+    $cList = $ctx.Web.Lists.GetByTitle($kpiListName)
+    $cView = $cList.Views.GetByTitle("All Items")
+    $ctx.Load($cView); $ctx.ExecuteQuery()
+    $cView.CustomFormatter = $kpiFmt
+    $cView.Update(); $ctx.ExecuteQuery()
+    Write-Ok "KPI tile row formatter applied (white text, coloured tiles)."
+} catch {
+    Write-Warn "GRC KPIs setup: $($_.Exception.Message)"
+}
+
+# ── STEP 3b: Governance Cadence list — edit dates here or automate with Power Automate
+# ─────────────────────────────────────────────────────────────────────────────
+
+Write-Step "STEP 3b — Setting up Governance Cadence list"
+
+$cadListName = "Governance Cadence"
+try {
+    $cadList = Get-PnPList -Identity $cadListName -ErrorAction SilentlyContinue
+    if (-not $cadList) {
+        Write-Host "    Creating $cadListName..." -NoNewline
+        $cadList = New-PnPList -Title $cadListName -Template GenericList -OnQuickLaunch:$false -ErrorAction Stop
+        Add-PnPField -List $cadListName -DisplayName "Frequency"  -InternalName "CadFrequency" -Type Text     -AddToDefaultView | Out-Null
+        Add-PnPField -List $cadListName -DisplayName "Next Date"  -InternalName "CadNextDate"  -Type DateTime -AddToDefaultView | Out-Null
+        Add-PnPField -List $cadListName -DisplayName "Sort Order" -InternalName "CadSortOrder" -Type Number   -AddToDefaultView | Out-Null
+        Write-Host " created." -ForegroundColor Green
+    } else { Write-Ok "$cadListName list exists — updating items." }
+
+    # ── CADENCE DATES — update each quarter (or Power Automate rolls them forward) ─
+    $cadData = @(
+        @{ Title="GM IT + COO 1:1";                CadFrequency="Monthly";   CadNextDate=[datetime]"2026-07-01"; CadSortOrder=1 }
+        @{ Title="Board / Risk Committee report";   CadFrequency="Bimonthly"; CadNextDate=[datetime]"2026-07-14"; CadSortOrder=2 }
+        @{ Title="IT risk register review";         CadFrequency="Quarterly"; CadNextDate=[datetime]"2026-09-30"; CadSortOrder=3 }
+        @{ Title="Essential Eight self-assessment"; CadFrequency="Quarterly"; CadNextDate=[datetime]"2026-09-30"; CadSortOrder=4 }
+        @{ Title="MSP performance review";          CadFrequency="Quarterly"; CadNextDate=[datetime]"2026-07-15"; CadSortOrder=5 }
+    )
+    foreach ($c in $cadData) {
+        $hit = Get-PnPListItem -List $cadListName -Query "<View><Query><Where><Eq><FieldRef Name='Title'/><Value Type='Text'>$($c.Title)</Value></Eq></Where></Query></View>" -ErrorAction SilentlyContinue
+        if ($hit) { Set-PnPListItem -List $cadListName -Identity $hit[0].Id -Values $c -ErrorAction SilentlyContinue | Out-Null }
+        else       { Add-PnPListItem -List $cadListName -Values $c -ErrorAction Stop | Out-Null }
+    }
+    Write-Ok "Governance cadence items updated."
+
+    # Create (or re-use) a compact Dashboard view sorted by Next Date
+    $cadView = Get-PnPView -List $cadListName -Identity "Dashboard" -ErrorAction SilentlyContinue
+    if (-not $cadView) {
+        $cadView = Add-PnPView -List $cadListName -Title "Dashboard" -Fields @("Title","CadFrequency","CadNextDate") -Query "<OrderBy><FieldRef Name='CadSortOrder'/></OrderBy>" -SetAsDefault:$false -ErrorAction Stop
+        Write-Ok "Dashboard view created."
+    }
+
+    # Teal column formatter for Next Date
+    $dateFmt = '{"$schema":"https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.schema.json","elmType":"span","style":{"color":"#0F6E56","font-weight":"600"},"txtContent":"@currentField.displayValue"}'
+    Set-PnPField -List $cadListName -Identity "CadNextDate" -Values @{ CustomFormatter = $dateFmt } -ErrorAction SilentlyContinue | Out-Null
+    Write-Ok "Next Date formatted in teal."
+} catch {
+    Write-Warn "Governance Cadence setup: $($_.Exception.Message)"
+}
 
 # ── Coloured callout banners (design's per-section info boxes) ────────────────
 # Each section in the design opens with a coloured callout, NOT KPI tiles.
@@ -189,6 +209,10 @@ function New-Callout {
 $calloutHome  = New-Callout "#FAEEDA" "#9A5E10" "Current state" "LHG has no formal GRC framework in place today. Cyber risk rating is currently <strong>High</strong>, driven by a CVSS 9.8 vulnerability in the nurse call infrastructure. The FY2026/27 IT programme establishes governance, uplifts Essential Eight maturity, and remediates critical risks."
 $calloutRisk  = New-Callout "#E1F5EE" "#0F6E56" "Key insight" "Aged-care technology dependency is a clinical governance risk. LHG runs a two-tier risk model &mdash; Tier&nbsp;1 IT risks escalate to the enterprise register when they materially threaten care delivery or compliance."
 $calloutCyber = New-Callout "#FBE3E1" "#B3261E" "Critical risk" "The nurse call infrastructure carries a CVSS&nbsp;9.8 vulnerability. A failure or compromise is a notifiable Serious Incident under Aged Care Quality &amp; Safety obligations. Remediation is the programme's top priority."
+$calloutPolicy   = New-Callout "#E1F5EE" "#0F6E56" "Authoritative source" "This library is LHG's single source of truth for IT policies, standards, and design principles. All changes require GM&nbsp;IT sign-off per the Change Management Policy (POL-CHG-03)."
+$calloutProjects = New-Callout "#FAEEDA" "#9A5E10" "Programme delivery" "LHG's FY2026/27 IT programme targets Essential Eight ML2, nurse call infrastructure remediation, MSP governance transition, and EHR planning. Track RAG status, milestones, and Class&nbsp;1 change requests here."
+$calloutITOps    = New-Callout "#E1F5EE" "#0F6E56" "Care impact classification" "The CMDB covers all systems classified by care impact (Class&nbsp;1–3). Class&nbsp;1 systems directly support clinical care and require 24/7 availability SLAs; changes to them are subject to a change freeze during critical care periods."
+$calloutTraining = New-Callout "#E1F5EE" "#0F6E56" "Mandatory awareness" "All LHG staff must complete annual mandatory security awareness training. Phishing simulation results and module completion rates are tracked here and reported to the Risk Committee each quarter."
 
 # ── Navigation sidebar — Markdown link list (used on every content page right column)
 # The MarkDown web part serialises reliably; QuickLinks with nested hashtables does not.
@@ -203,7 +227,6 @@ $navMd = @"
 - [Cyber & Security]($Base/SitePages/Cyber-Security.aspx)
 - [IT Operations & Architecture]($Base/SitePages/IT-Operations-Architecture.aspx)
 - [Training & Awareness]($Base/SitePages/Training-Awareness.aspx)
-- [Essential Eight Maturity]($Base/SitePages/Essential-Eight-Maturity.aspx)
 "@
 
 Write-Ok "Shared content prepared."
@@ -330,14 +353,11 @@ Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn  
 Add-TextWP "Executive-Dashboard.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Cyber risk posture, programme status, and the IT risk register at a glance.&nbsp; Audience: COO, Risk Committee, Board.</p>"
 
 Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn    -Order 2 | Out-Null
-Add-TextWP "Executive-Dashboard.aspx" 2 1 $kpiHtml
-Write-Ok "KPI status tiles added"
+Add-ListWP  "Executive-Dashboard.aspx" 2 1 "GRC KPIs" "All Items"
 
 Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate TwoColumnLeft -Order 3 | Out-Null
 Add-ListWP  "Executive-Dashboard.aspx" 3 1 "IT Risk Register" "Executive View"
-Add-TextWP  "Executive-Dashboard.aspx" 3 2 $cadenceHtml
-Write-Ok "Governance cadence panel added"
-Add-NavSidebar "Executive-Dashboard.aspx" 3 2
+Add-ListWP  "Executive-Dashboard.aspx" 3 2 "Governance Cadence" "Dashboard"
 
 Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn    -Order 4 | Out-Null
 Add-ListWP  "Executive-Dashboard.aspx" 4 1 "Projects & Programme" "Active Projects"
@@ -378,6 +398,7 @@ Clear-PageContent "Policy-Standards-Principles.aspx"
 
 Add-PnPPageSection -Page "Policy-Standards-Principles.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Policy-Standards-Principles.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Authoritative library of IT policies, standards, and design principles. Track status, review cycles, and ownership.</p>"
+Add-TextWP "Policy-Standards-Principles.aspx" 1 1 $calloutPolicy
 
 Add-PnPPageSection -Page "Policy-Standards-Principles.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Policy-Standards-Principles.aspx" 2 1 "Policy, Standards & Principles Library" "All Items"
@@ -397,6 +418,7 @@ Clear-PageContent "Projects-Programme.aspx"
 
 Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Projects-Programme.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>IT programme portfolio, project status, and the change log. Track RAG status, milestones, and Class 1/2 changes.</p>"
+Add-TextWP "Projects-Programme.aspx" 1 1 $calloutProjects
 
 Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Projects-Programme.aspx" 2 1 "Projects & Programme" "All Items"
@@ -446,6 +468,7 @@ Clear-PageContent "IT-Operations-Architecture.aspx"
 
 Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "IT-Operations-Architecture.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>CMDB asset and configuration register, and Class 1 change log. Manage infrastructure inventory, lifecycle status, and change control.</p>"
+Add-TextWP "IT-Operations-Architecture.aspx" 1 1 $calloutITOps
 
 Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "IT-Operations-Architecture.aspx" 2 1 "CMDB — Asset & Configuration Register" "All Items"
@@ -467,6 +490,7 @@ Clear-PageContent "Training-Awareness.aspx"
 
 Add-PnPPageSection -Page "Training-Awareness.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
 Add-TextWP "Training-Awareness.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>IT security training and awareness register. Track mandatory training, completion rates, and staff acknowledgements.</p>"
+Add-TextWP "Training-Awareness.aspx" 1 1 $calloutTraining
 
 Add-PnPPageSection -Page "Training-Awareness.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
 Add-ListWP    "Training-Awareness.aspx" 2 1 "Training & Awareness Register" "All Items"
@@ -521,9 +545,9 @@ Write-Host "    Option A (in SharePoint, no re-run):" -ForegroundColor Gray
 Write-Host "      Open Executive Dashboard > Edit (top right) > click the coloured KPI tile block >" -ForegroundColor Gray
 Write-Host "      the toolbar 'Edit HTML' (</>) lets you change HIGH / IN PROGRESS / ON TRACK / 3" -ForegroundColor Gray
 Write-Host "      and the sub-captions, then Republish." -ForegroundColor Gray
-Write-Host "    Option B (re-run this script): edit the \$kpiHtml block near the top of this" -ForegroundColor Gray
-Write-Host "      file, then run .\Add-ListWebParts.ps1 again (it clears and rebuilds safely)." -ForegroundColor Gray
-Write-Host "    Or re-run this script after editing the `$kpiHtml block at the top." -ForegroundColor Gray
+Write-Host "    Option B (re-run this script): edit the KPI values in the \$kpiData block in STEP 3a" -ForegroundColor Gray
+Write-Host "      then run .\Add-ListWebParts.ps1 again — it clears and rebuilds safely." -ForegroundColor Gray
+Write-Host "    Or re-run this script after editing \$kpiData in STEP 3a." -ForegroundColor Gray
 Write-Host ""
 Write-Host "  Remaining manual steps:" -ForegroundColor White
 Write-Host "  1. Site Settings > Language and region: English (Australia), UTC+10 Canberra/Melbourne/Sydney" -ForegroundColor Gray
