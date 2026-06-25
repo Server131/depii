@@ -1,19 +1,27 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Post-provisioning script: applies the LHG site theme and wires up List web parts
-    on each IT GRC page.
+    Post-provisioning script: applies LHG theme and builds properly-laid-out pages.
 
 .DESCRIPTION
-    Run this after Apply-ITGRC-Provisioning.ps1 has completed successfully.
+    Run after Apply-ITGRC-Provisioning.ps1 has completed.
 
     1. Applies the LHG custom theme (teal primary / navy secondary).
-    2. For each page, adds the correct List web part(s) pointing at the
-       provisioned lists and views.
+    2. Clears all placeholder content from each page.
+    3. Rebuilds each page with the correct visual layout:
+         Executive Dashboard: 4 coloured KPI tiles + two-column layout
+           Left  (67%): IT Risk Register (Executive View)
+           Right (33%): Governance Cadence panel + Quick Links navigation
+         All content pages: two-column layout
+           Left  (67%): primary list web part
+           Right (33%): Quick Links navigation sidebar
+         Secondary list (where applicable) in a OneColumn section below.
+
+    Safe to re-run — existing page content is cleared before each rebuild.
 
 .NOTES
     Author:  GM Information Technology, Lutheran Homes Group
-    Version: 1.0
+    Version: 2.0
     Date:    June 2026
     Requires: PnP.PowerShell 3.x, Windows PowerShell 5.1
 #>
@@ -21,14 +29,14 @@
 # ── Configuration ─────────────────────────────────────────────────────────────
 
 $SiteUrl  = "https://lutheranhomesgroup.sharepoint.com/sites/itgovernance/"
-$ClientId = ""    # same client ID used in Apply-ITGRC-Provisioning.ps1
+$ClientId = ""    # Entra app registration Client ID (same as Apply-ITGRC-Provisioning.ps1)
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
-function Write-Step   { param([string]$m) Write-Host "`n[$([datetime]::Now.ToString('HH:mm:ss'))] $m" -ForegroundColor Cyan }
-function Write-Ok     { param([string]$m) Write-Host "  ✔  $m" -ForegroundColor Green }
-function Write-Warn   { param([string]$m) Write-Host "  ⚠  $m" -ForegroundColor Yellow }
-function Write-Fail   { param([string]$m) Write-Host "  ✘  $m" -ForegroundColor Red }
+function Write-Step { param([string]$m) Write-Host "`n[$([datetime]::Now.ToString('HH:mm:ss'))] $m" -ForegroundColor Cyan }
+function Write-Ok   { param([string]$m) Write-Host "  ✔  $m" -ForegroundColor Green }
+function Write-Warn { param([string]$m) Write-Host "  ⚠  $m" -ForegroundColor Yellow }
+function Write-Fail { param([string]$m) Write-Host "  ✘  $m" -ForegroundColor Red }
 
 # ── STEP 1 — Connect ──────────────────────────────────────────────────────────
 
@@ -45,8 +53,7 @@ try {
     exit 1
 }
 
-# ── STEP 2 — Apply custom theme ───────────────────────────────────────────────
-# LHG colour palette: teal primary (#0F6E56), navy secondary (#1F3864)
+# ── STEP 2 — Apply LHG custom theme ──────────────────────────────────────────
 
 Write-Step "STEP 2 — Applying LHG custom theme"
 
@@ -77,120 +84,399 @@ $themeSlots = @{
 }
 
 try {
-    # Add theme to tenant palette then apply to this site
     Add-PnPTenantTheme -Identity "LHG-ITGRC" -Palette $themeSlots -IsInverted $false -Overwrite -ErrorAction Stop
     Set-PnPWebTheme -Theme "LHG-ITGRC" -ErrorAction Stop
     Write-Ok "LHG custom theme applied."
 } catch {
-    Write-Warn "Could not apply theme via tenant: $($_.Exception.Message)"
+    Write-Warn "Could not apply theme: $($_.Exception.Message)"
     Write-Warn "Apply manually: Site Settings > Change the look > Theme."
 }
 
-# ── STEP 3 — Wire up List web parts on each page ─────────────────────────────
-# Each entry: PageName | ListTitle | ViewName | WebPartTitle | Order (within page)
-# Multiple entries for the same page are added top-to-bottom by Order.
+# ── STEP 3 — Prepare shared content ──────────────────────────────────────────
 
-Write-Step "STEP 3 — Adding List web parts to pages"
+Write-Step "STEP 3 — Preparing shared web part content"
 
-$PageListMap = @(
-    # Executive Dashboard
-    [PSCustomObject]@{ Page="Executive-Dashboard.aspx";          List="IT Risk Register";                         View="Executive View";      Title="IT Risk Register — High & Critical Risks"; Order=1 }
-    [PSCustomObject]@{ Page="Executive-Dashboard.aspx";          List="Projects & Programme";                     View="Active Projects";     Title="Projects & Programme — Active Projects";    Order=2 }
+$Base = $SiteUrl.TrimEnd('/')
 
-    # Risk & Compliance
-    [PSCustomObject]@{ Page="Risk-Compliance.aspx";              List="IT Risk Register";                         View="All Items";           Title="IT Risk Register";                          Order=1 }
-    [PSCustomObject]@{ Page="Risk-Compliance.aspx";              List="Incident Register";                        View="Open Incidents";      Title="Incident Register — Open Incidents";        Order=2 }
+# ── KPI status tiles for Executive Dashboard ─────────────────────────────────
+# Edit the value and subtitle text here when risk posture or project count changes.
 
-    # Policy, Standards & Principles
-    [PSCustomObject]@{ Page="Policy-Standards-Principles.aspx";  List="Policy, Standards & Principles Library";  View="All Items";           Title="Policy, Standards & Principles Library";    Order=1 }
+$kpiHtml = @"
+<table width="100%" style="border-collapse:separate;border-spacing:6px 0;margin:0;table-layout:fixed;">
+  <tr>
+    <td style="background:#B71C1C;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Cyber Risk Rating</div>
+      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">HIGH</div>
+      <div style="font-size:12px;opacity:.75;">Filtering &amp; nurse call gaps</div>
+    </td>
+    <td style="background:#8D4E00;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Programme Status</div>
+      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">IN PROGRESS</div>
+      <div style="font-size:12px;opacity:.75;">FY26/27 cyber uplift</div>
+    </td>
+    <td style="background:#1B5E20;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Budget Status</div>
+      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">ON TRACK</div>
+      <div style="font-size:12px;opacity:.75;">Within approved envelope</div>
+    </td>
+    <td style="background:#1F3864;color:#ffffff;padding:20px 22px;border-radius:4px;width:25%;vertical-align:top;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.85;margin-bottom:6px;">Active Projects</div>
+      <div style="font-size:30px;font-weight:700;line-height:1.1;margin-bottom:5px;">3</div>
+      <div style="font-size:12px;opacity:.75;">2 pending budget</div>
+    </td>
+  </tr>
+</table>
+"@
 
-    # Projects & Programme
-    [PSCustomObject]@{ Page="Projects-Programme.aspx";           List="Projects & Programme";                     View="All Items";           Title="Projects & Programme";                      Order=1 }
-    [PSCustomObject]@{ Page="Projects-Programme.aspx";           List="Change Log";                               View="All Items";           Title="Change Log";                                Order=2 }
+# ── Governance Cadence panel for Executive Dashboard right column ─────────────
+# Edit dates each quarter.
 
-    # Cyber & Security
-    [PSCustomObject]@{ Page="Cyber-Security.aspx";               List="Essential Eight Maturity";                 View="Assessment Summary";  Title="Essential Eight — Assessment Summary";      Order=1 }
-    [PSCustomObject]@{ Page="Cyber-Security.aspx";               List="Incident Register";                        View="All Items";           Title="Incident Register";                         Order=2 }
+$cadenceHtml = @"
+<div style="font-size:14px;font-weight:600;color:#1F3864;margin:0 0 10px;">Governance cadence</div>
+<table width="100%" style="border-collapse:collapse;font-size:13px;">
+  <tr style="border-bottom:1px solid #eeeeee;">
+    <td style="padding:10px 0 10px;">
+      <div style="font-weight:600;color:#222222;">GM IT + COO 1:1</div>
+      <div style="font-size:11px;color:#999999;margin-top:2px;">Monthly</div>
+    </td>
+    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">1 Jul 2026</td>
+  </tr>
+  <tr style="border-bottom:1px solid #eeeeee;">
+    <td style="padding:10px 0 10px;">
+      <div style="font-weight:600;color:#222222;">Board / Risk Committee report</div>
+      <div style="font-size:11px;color:#999999;margin-top:2px;">Bimonthly</div>
+    </td>
+    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">14 Jul 2026</td>
+  </tr>
+  <tr style="border-bottom:1px solid #eeeeee;">
+    <td style="padding:10px 0 10px;">
+      <div style="font-weight:600;color:#222222;">IT risk register review</div>
+      <div style="font-size:11px;color:#999999;margin-top:2px;">Quarterly</div>
+    </td>
+    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">30 Sep 2026</td>
+  </tr>
+  <tr style="border-bottom:1px solid #eeeeee;">
+    <td style="padding:10px 0 10px;">
+      <div style="font-weight:600;color:#222222;">Essential Eight self-assessment</div>
+      <div style="font-size:11px;color:#999999;margin-top:2px;">Quarterly</div>
+    </td>
+    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">30 Sep 2026</td>
+  </tr>
+  <tr>
+    <td style="padding:10px 0 10px;">
+      <div style="font-weight:600;color:#222222;">MSP performance review</div>
+      <div style="font-size:11px;color:#999999;margin-top:2px;">Quarterly</div>
+    </td>
+    <td style="text-align:right;color:#0F6E56;font-weight:600;white-space:nowrap;padding-left:8px;">15 Jul 2026</td>
+  </tr>
+</table>
+"@
 
-    # IT Operations & Architecture
-    [PSCustomObject]@{ Page="IT-Operations-Architecture.aspx";   List="CMDB — Asset & Configuration Register";   View="All Items";           Title="CMDB — Asset & Configuration Register";     Order=1 }
-    [PSCustomObject]@{ Page="IT-Operations-Architecture.aspx";   List="Change Log";                               View="Class 1 Changes";     Title="Change Log — Class 1 Changes";              Order=2 }
+# ── Quick Links sidebar — pre-configured navigation items ─────────────────────
 
-    # Training & Awareness
-    [PSCustomObject]@{ Page="Training-Awareness.aspx";           List="Training & Awareness Register";            View="All Items";           Title="Training & Awareness Register";             Order=1 }
-
-    # Essential Eight Maturity
-    [PSCustomObject]@{ Page="Essential-Eight-Maturity.aspx";     List="Essential Eight Maturity";                 View="Assessment Summary";  Title="Essential Eight — Assessment Summary";      Order=1 }
-    [PSCustomObject]@{ Page="Essential-Eight-Maturity.aspx";     List="Essential Eight Maturity";                 View="Gaps Only";           Title="Essential Eight — Gaps Only";               Order=2 }
+$qlItems = @(
+    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Risk-Compliance.aspx";             "title" = "Risk & Compliance"              }; "thumbnailType" = 2; "id" = 1; "description" = ""; "altText" = "" }
+    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Policy-Standards-Principles.aspx"; "title" = "Policy, Standards & Principles" }; "thumbnailType" = 2; "id" = 2; "description" = ""; "altText" = "" }
+    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Projects-Programme.aspx";          "title" = "Projects & Programme"           }; "thumbnailType" = 2; "id" = 3; "description" = ""; "altText" = "" }
+    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Cyber-Security.aspx";              "title" = "Cyber & Security"               }; "thumbnailType" = 2; "id" = 4; "description" = ""; "altText" = "" }
+    @{ "sourceItem" = @{ "url" = "$Base/SitePages/IT-Operations-Architecture.aspx";  "title" = "IT Operations & Architecture"   }; "thumbnailType" = 2; "id" = 5; "description" = ""; "altText" = "" }
+    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Training-Awareness.aspx";          "title" = "Training & Awareness"           }; "thumbnailType" = 2; "id" = 6; "description" = ""; "altText" = "" }
+    @{ "sourceItem" = @{ "url" = "$Base/SitePages/Executive-Dashboard.aspx";         "title" = "Executive Dashboard"            }; "thumbnailType" = 2; "id" = 7; "description" = ""; "altText" = "" }
 )
 
-# Group by page so we process one page at a time
-$pages = $PageListMap | Select-Object -ExpandProperty Page | Sort-Object -Unique
+$qlProps = @{
+    "isMigrated"          = $true
+    "layoutId"            = "List"
+    "shouldShowThumbnail" = $false
+    "dataProviderId"      = "QuickLinksDataProvider"
+    "items"               = $qlItems
+}
 
-foreach ($pageName in $pages) {
-    Write-Host "`n  Page: $pageName" -ForegroundColor White
-    $entries = $PageListMap | Where-Object { $_.Page -eq $pageName } | Sort-Object Order
+Write-Ok "Shared content prepared."
 
+# ── Helper: clear all canvas controls from a page ────────────────────────────
+
+function Clear-PageContent {
+    param([string]$PageName)
     try {
-        $page = Get-PnPPage -Identity $pageName -ErrorAction Stop
-    } catch {
-        Write-Fail "  Could not load page $pageName`: $($_.Exception.Message)"
-        continue
-    }
-
-    foreach ($entry in $entries) {
+        $pg = Get-PnPPage -Identity $PageName -ErrorAction Stop
+        # Try native ClearPage() first (exposed by PnP.Framework on the page object)
         try {
-            # Resolve list ID
-            $list = Get-PnPList -Identity $entry.List -ErrorAction Stop
-
-            # Resolve view ID
-            $view = Get-PnPView -List $list -Identity $entry.View -ErrorAction Stop
-
-            # Build List web part properties
-            $wpProps = @{
-                "selectedListId"  = $list.Id.ToString()
-                "selectedViewId"  = $view.Id.ToString()
-                "isDocumentLibrary" = "false"
-                "showDefaultDocumentLibrary" = "false"
-            }
-
-            # Add a new section to the page for each list web part
-            Add-PnPPageSection -Page $page -SectionTemplate OneColumn -Order $entry.Order -ErrorAction Stop | Out-Null
-
-            Add-PnPPageWebPart -Page $page `
-                               -DefaultWebPartType List `
-                               -Section $entry.Order `
-                               -Column 1 `
-                               -WebPartProperties $wpProps `
-                               -ErrorAction Stop | Out-Null
-
-            Write-Ok "$($entry.List) / $($entry.View) → $pageName (section $($entry.Order))"
-        } catch {
-            Write-Warn "$($entry.List) / $($entry.View) → $pageName FAILED: $($_.Exception.Message)"
+            $pg.ClearPage()
+            $pg.Save()
+            Write-Ok "Cleared $PageName"
+            return
+        } catch { }
+        # Fallback: remove every control individually
+        $ctrls = @($pg.Controls)
+        foreach ($c in $ctrls) {
+            Remove-PnPPageComponent -Page $PageName -InstanceId $c.InstanceId -Force -ErrorAction SilentlyContinue
         }
-    }
-
-    # Save and publish the page
-    try {
-        Set-PnPPage -Identity $pageName -Published -ErrorAction Stop
-        Write-Ok "$pageName saved and published."
+        if ($ctrls.Count -gt 0) { Write-Ok "Cleared $($ctrls.Count) control(s) from $PageName" }
     } catch {
-        Write-Warn "Could not publish $pageName`: $($_.Exception.Message)"
+        Write-Warn "Could not clear ${PageName}: $($_.Exception.Message)"
     }
 }
+
+# ── Helper: add a List web part (resolves list + view GUIDs at runtime) ───────
+
+function Add-ListWP {
+    param(
+        [string]$PageName,
+        [int]$Section,
+        [int]$Column,
+        [string]$ListTitle,
+        [string]$ViewName
+    )
+    try {
+        $list = Get-PnPList -Identity $ListTitle -ErrorAction Stop
+        $view = Get-PnPView -List $list -Identity $ViewName -ErrorAction Stop
+        Add-PnPPageWebPart -Page $PageName `
+            -DefaultWebPartType List `
+            -Section $Section -Column $Column `
+            -WebPartProperties @{
+                "selectedListId"             = $list.Id.ToString()
+                "selectedViewId"             = $view.Id.ToString()
+                "isDocumentLibrary"          = "false"
+                "showDefaultDocumentLibrary" = "false"
+            } -ErrorAction Stop | Out-Null
+        Write-Ok "$ListTitle / $ViewName → S$Section C$Column"
+    } catch {
+        Write-Warn "$ListTitle / $ViewName FAILED: $($_.Exception.Message)"
+    }
+}
+
+# ── Helper: add a Text web part ───────────────────────────────────────────────
+
+function Add-TextWP {
+    param([string]$PageName, [int]$Section, [int]$Column, [string]$Html)
+    Add-PnPPageWebPart -Page $PageName -DefaultWebPartType Text `
+        -Section $Section -Column $Column `
+        -WebPartProperties @{ "text" = $Html } `
+        -ErrorAction SilentlyContinue | Out-Null
+}
+
+# ── Helper: add the shared Quick Links sidebar ────────────────────────────────
+
+function Add-NavSidebar {
+    param([string]$PageName, [int]$Section, [int]$Column)
+    Add-PnPPageWebPart -Page $PageName -DefaultWebPartType QuickLinks `
+        -Section $Section -Column $Column `
+        -WebPartProperties $qlProps `
+        -ErrorAction SilentlyContinue | Out-Null
+    Write-Ok "Quick Links sidebar → S$Section C$Column"
+}
+
+# ── STEP 4 — Rebuild each page ────────────────────────────────────────────────
+
+Write-Step "STEP 4 — Rebuilding page layouts"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Executive Dashboard
+#   S1 OneColumn      subtitle text
+#   S2 OneColumn      4 KPI status tiles (HTML table)
+#   S3 TwoColumnLeft  [Left] IT Risk Register — Executive View
+#                     [Right] Governance Cadence panel + Quick Links
+#   S4 OneColumn      Projects & Programme — Active Projects
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Executive-Dashboard.aspx" -ForegroundColor White
+Clear-PageContent "Executive-Dashboard.aspx"
+
+Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn    -Order 1 | Out-Null
+Add-TextWP "Executive-Dashboard.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Cyber risk posture, programme status, and the IT risk register at a glance.&nbsp; Audience: COO, Risk Committee, Board.</p>"
+
+Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn    -Order 2 | Out-Null
+Add-TextWP "Executive-Dashboard.aspx" 2 1 $kpiHtml
+Write-Ok "KPI status tiles added"
+
+Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate TwoColumnLeft -Order 3 | Out-Null
+Add-ListWP  "Executive-Dashboard.aspx" 3 1 "IT Risk Register" "Executive View"
+Add-TextWP  "Executive-Dashboard.aspx" 3 2 $cadenceHtml
+Write-Ok "Governance cadence panel added"
+Add-NavSidebar "Executive-Dashboard.aspx" 3 2
+
+Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn    -Order 4 | Out-Null
+Add-ListWP  "Executive-Dashboard.aspx" 4 1 "Projects & Programme" "Active Projects"
+
+try   { Set-PnPPage -Identity "Executive-Dashboard.aspx" -Published -ErrorAction Stop; Write-Ok "Executive-Dashboard.aspx published." }
+catch { Write-Warn "Could not publish Executive-Dashboard.aspx: $($_.Exception.Message)" }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Risk & Compliance
+#   S1 OneColumn      subtitle text
+#   S2 TwoColumnLeft  [Left] IT Risk Register — All Items   [Right] Quick Links
+#   S3 OneColumn      Incident Register — Open Incidents
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Risk-Compliance.aspx" -ForegroundColor White
+Clear-PageContent "Risk-Compliance.aspx"
+
+Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "Risk-Compliance.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Complete IT risk register and all open incidents. Manage risk ratings, escalations, and regulatory incident reporting.</p>"
+
+Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-ListWP    "Risk-Compliance.aspx" 2 1 "IT Risk Register" "All Items"
+Add-NavSidebar "Risk-Compliance.aspx" 2 2
+
+Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
+Add-ListWP "Risk-Compliance.aspx" 3 1 "Incident Register" "Open Incidents"
+
+try   { Set-PnPPage -Identity "Risk-Compliance.aspx" -Published -ErrorAction Stop; Write-Ok "Risk-Compliance.aspx published." }
+catch { Write-Warn "Could not publish Risk-Compliance.aspx: $($_.Exception.Message)" }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Policy, Standards & Principles
+#   S1 OneColumn      subtitle text
+#   S2 TwoColumnLeft  [Left] Policy Library — All Items   [Right] Quick Links
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Policy-Standards-Principles.aspx" -ForegroundColor White
+Clear-PageContent "Policy-Standards-Principles.aspx"
+
+Add-PnPPageSection -Page "Policy-Standards-Principles.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "Policy-Standards-Principles.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Authoritative library of IT policies, standards, and design principles. Track status, review cycles, and ownership.</p>"
+
+Add-PnPPageSection -Page "Policy-Standards-Principles.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-ListWP    "Policy-Standards-Principles.aspx" 2 1 "Policy, Standards & Principles Library" "All Items"
+Add-NavSidebar "Policy-Standards-Principles.aspx" 2 2
+
+try   { Set-PnPPage -Identity "Policy-Standards-Principles.aspx" -Published -ErrorAction Stop; Write-Ok "Policy-Standards-Principles.aspx published." }
+catch { Write-Warn "Could not publish Policy-Standards-Principles.aspx: $($_.Exception.Message)" }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Projects & Programme
+#   S1 OneColumn      subtitle text
+#   S2 TwoColumnLeft  [Left] Projects — All Items   [Right] Quick Links
+#   S3 OneColumn      Change Log — All Items
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Projects-Programme.aspx" -ForegroundColor White
+Clear-PageContent "Projects-Programme.aspx"
+
+Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "Projects-Programme.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>IT programme portfolio, project status, and the change log. Track RAG status, milestones, and Class 1/2 changes.</p>"
+
+Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-ListWP    "Projects-Programme.aspx" 2 1 "Projects & Programme" "All Items"
+Add-NavSidebar "Projects-Programme.aspx" 2 2
+
+Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
+Add-ListWP "Projects-Programme.aspx" 3 1 "Change Log" "All Items"
+
+try   { Set-PnPPage -Identity "Projects-Programme.aspx" -Published -ErrorAction Stop; Write-Ok "Projects-Programme.aspx published." }
+catch { Write-Warn "Could not publish Projects-Programme.aspx: $($_.Exception.Message)" }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Cyber & Security
+#   S1 OneColumn      subtitle text
+#   S2 TwoColumnLeft  [Left] Essential Eight — Assessment Summary   [Right] Quick Links
+#   S3 OneColumn      Incident Register — All Items
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Cyber-Security.aspx" -ForegroundColor White
+Clear-PageContent "Cyber-Security.aspx"
+
+Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "Cyber-Security.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>Essential Eight maturity assessment and cyber security incident register. Monitor ACSC compliance posture and security events.</p>"
+
+Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-ListWP    "Cyber-Security.aspx" 2 1 "Essential Eight Maturity" "Assessment Summary"
+Add-NavSidebar "Cyber-Security.aspx" 2 2
+
+Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
+Add-ListWP "Cyber-Security.aspx" 3 1 "Incident Register" "All Items"
+
+try   { Set-PnPPage -Identity "Cyber-Security.aspx" -Published -ErrorAction Stop; Write-Ok "Cyber-Security.aspx published." }
+catch { Write-Warn "Could not publish Cyber-Security.aspx: $($_.Exception.Message)" }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# IT Operations & Architecture
+#   S1 OneColumn      subtitle text
+#   S2 TwoColumnLeft  [Left] CMDB — All Items   [Right] Quick Links
+#   S3 OneColumn      Change Log — Class 1 Changes
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── IT-Operations-Architecture.aspx" -ForegroundColor White
+Clear-PageContent "IT-Operations-Architecture.aspx"
+
+Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "IT-Operations-Architecture.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>CMDB asset and configuration register, and Class 1 change log. Manage infrastructure inventory, lifecycle status, and change control.</p>"
+
+Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-ListWP    "IT-Operations-Architecture.aspx" 2 1 "CMDB — Asset & Configuration Register" "All Items"
+Add-NavSidebar "IT-Operations-Architecture.aspx" 2 2
+
+Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
+Add-ListWP "IT-Operations-Architecture.aspx" 3 1 "Change Log" "Class 1 Changes"
+
+try   { Set-PnPPage -Identity "IT-Operations-Architecture.aspx" -Published -ErrorAction Stop; Write-Ok "IT-Operations-Architecture.aspx published." }
+catch { Write-Warn "Could not publish IT-Operations-Architecture.aspx: $($_.Exception.Message)" }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Training & Awareness
+#   S1 OneColumn      subtitle text
+#   S2 TwoColumnLeft  [Left] Training Register — All Items   [Right] Quick Links
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Training-Awareness.aspx" -ForegroundColor White
+Clear-PageContent "Training-Awareness.aspx"
+
+Add-PnPPageSection -Page "Training-Awareness.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "Training-Awareness.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>IT security training and awareness register. Track mandatory training, completion rates, and staff acknowledgements.</p>"
+
+Add-PnPPageSection -Page "Training-Awareness.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-ListWP    "Training-Awareness.aspx" 2 1 "Training & Awareness Register" "All Items"
+Add-NavSidebar "Training-Awareness.aspx" 2 2
+
+try   { Set-PnPPage -Identity "Training-Awareness.aspx" -Published -ErrorAction Stop; Write-Ok "Training-Awareness.aspx published." }
+catch { Write-Warn "Could not publish Training-Awareness.aspx: $($_.Exception.Message)" }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Essential Eight Maturity
+#   S1 OneColumn      subtitle text
+#   S2 TwoColumnLeft  [Left] Essential Eight — Assessment Summary   [Right] Quick Links
+#   S3 OneColumn      Essential Eight — Gaps Only
+# ═══════════════════════════════════════════════════════════════════════════════
+
+Write-Host "`n  ── Essential-Eight-Maturity.aspx" -ForegroundColor White
+Clear-PageContent "Essential-Eight-Maturity.aspx"
+
+Add-PnPPageSection -Page "Essential-Eight-Maturity.aspx" -SectionTemplate OneColumn     -Order 1 | Out-Null
+Add-TextWP "Essential-Eight-Maturity.aspx" 1 1 "<p style='color:#555555;font-size:14px;margin:0;'>ACSC Essential Eight maturity assessment register. Track current vs. target maturity levels and identify gaps for uplift planning.</p>"
+
+Add-PnPPageSection -Page "Essential-Eight-Maturity.aspx" -SectionTemplate TwoColumnLeft -Order 2 | Out-Null
+Add-ListWP    "Essential-Eight-Maturity.aspx" 2 1 "Essential Eight Maturity" "Assessment Summary"
+Add-NavSidebar "Essential-Eight-Maturity.aspx" 2 2
+
+Add-PnPPageSection -Page "Essential-Eight-Maturity.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
+Add-ListWP "Essential-Eight-Maturity.aspx" 3 1 "Essential Eight Maturity" "Gaps Only"
+
+try   { Set-PnPPage -Identity "Essential-Eight-Maturity.aspx" -Published -ErrorAction Stop; Write-Ok "Essential-Eight-Maturity.aspx published." }
+catch { Write-Warn "Could not publish Essential-Eight-Maturity.aspx: $($_.Exception.Message)" }
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 
 Write-Host "`n" -NoNewline
 Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Cyan
-Write-Host "  Post-provisioning complete." -ForegroundColor Green
+Write-Host "  Page rebuild complete." -ForegroundColor Green
 Write-Host "  Review the site at: $SiteUrl" -ForegroundColor Cyan
 Write-Host "═══════════════════════════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host ""
+Write-Host "  Executive Dashboard layout:" -ForegroundColor White
+Write-Host "    KPI tiles  (full width) — Cyber Risk Rating | Programme Status | Budget Status | Active Projects" -ForegroundColor Gray
+Write-Host "    Left 67%   — IT Risk Register (Executive View, High & Critical risks only)" -ForegroundColor Gray
+Write-Host "    Right 33%  — Governance Cadence panel + Quick Links to all sections" -ForegroundColor Gray
+Write-Host "    Full width — Projects & Programme (Active Projects)" -ForegroundColor Gray
+Write-Host ""
+Write-Host "  All other pages: primary list left (67%), Quick Links sidebar right (33%)." -ForegroundColor Gray
+Write-Host ""
+Write-Host "  To update KPI tile values when risk posture changes:" -ForegroundColor White
+Write-Host "    Edit page > click the coloured tile area > update HIGH / IN PROGRESS / 3 / etc." -ForegroundColor Gray
+Write-Host "    Or re-run this script after editing the `$kpiHtml block at the top." -ForegroundColor Gray
+Write-Host ""
 Write-Host "  Remaining manual steps:" -ForegroundColor White
-Write-Host "  1. Site Settings > Language and region > locale English (Australia)," -ForegroundColor Gray
-Write-Host "     timezone (UTC+10:00) Canberra, Melbourne, Sydney." -ForegroundColor Gray
-Write-Host "  2. Assign members to the four permission groups:" -ForegroundColor Gray
-Write-Host "     IT-GRC-IT (Edit) | IT-GRC-Risk (Contribute) | IT-GRC-PMO (Contribute) | IT-GRC-Exec (Read)" -ForegroundColor Gray
-Write-Host "  3. Set each group's permission level via Site Permissions." -ForegroundColor Gray
+Write-Host "  1. Site Settings > Language and region: English (Australia), UTC+10 Canberra/Melbourne/Sydney" -ForegroundColor Gray
+Write-Host "  2. Assign members to: IT-GRC-IT (Edit) | IT-GRC-Risk (Contribute) | IT-GRC-PMO (Contribute) | IT-GRC-Exec (Read)" -ForegroundColor Gray
+Write-Host "  3. Site Permissions > set each group's permission level" -ForegroundColor Gray
 Write-Host ""
