@@ -250,10 +250,24 @@ function Add-ListWP {
 
 function Add-TextWP {
     param([string]$PageName, [int]$Section, [int]$Column, [string]$Html)
-    Add-PnPPageWebPart -Page $PageName -DefaultWebPartType Text `
+    # Text web parts use the dedicated cmdlet (DefaultWebPartType has no "Text" member)
+    Add-PnPPageTextPart -Page $PageName `
         -Section $Section -Column $Column `
-        -WebPartProperties @{ "text" = $Html } `
+        -Text $Html `
         -ErrorAction SilentlyContinue | Out-Null
+}
+
+# ── Helper: publish a page (Set-PnPPage has no -Published; use the page object) ─
+
+function Publish-Page {
+    param([string]$PageName)
+    try {
+        $pg = Get-PnPPage -Identity $PageName -ErrorAction Stop
+        $pg.Publish()
+        Write-Ok "$PageName published."
+    } catch {
+        Write-Warn "Could not publish ${PageName}: $($_.Exception.Message)"
+    }
 }
 
 # ── Helper: add the shared Quick Links sidebar ────────────────────────────────
@@ -299,8 +313,7 @@ Add-NavSidebar "Executive-Dashboard.aspx" 3 2
 Add-PnPPageSection -Page "Executive-Dashboard.aspx" -SectionTemplate OneColumn    -Order 4 | Out-Null
 Add-ListWP  "Executive-Dashboard.aspx" 4 1 "Projects & Programme" "Active Projects"
 
-try   { Set-PnPPage -Identity "Executive-Dashboard.aspx" -Published -ErrorAction Stop; Write-Ok "Executive-Dashboard.aspx published." }
-catch { Write-Warn "Could not publish Executive-Dashboard.aspx: $($_.Exception.Message)" }
+Publish-Page "Executive-Dashboard.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Risk & Compliance
@@ -322,8 +335,7 @@ Add-NavSidebar "Risk-Compliance.aspx" 2 2
 Add-PnPPageSection -Page "Risk-Compliance.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
 Add-ListWP "Risk-Compliance.aspx" 3 1 "Incident Register" "Open Incidents"
 
-try   { Set-PnPPage -Identity "Risk-Compliance.aspx" -Published -ErrorAction Stop; Write-Ok "Risk-Compliance.aspx published." }
-catch { Write-Warn "Could not publish Risk-Compliance.aspx: $($_.Exception.Message)" }
+Publish-Page "Risk-Compliance.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Policy, Standards & Principles
@@ -341,8 +353,7 @@ Add-PnPPageSection -Page "Policy-Standards-Principles.aspx" -SectionTemplate Two
 Add-ListWP    "Policy-Standards-Principles.aspx" 2 1 "Policy, Standards & Principles Library" "All Items"
 Add-NavSidebar "Policy-Standards-Principles.aspx" 2 2
 
-try   { Set-PnPPage -Identity "Policy-Standards-Principles.aspx" -Published -ErrorAction Stop; Write-Ok "Policy-Standards-Principles.aspx published." }
-catch { Write-Warn "Could not publish Policy-Standards-Principles.aspx: $($_.Exception.Message)" }
+Publish-Page "Policy-Standards-Principles.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Projects & Programme
@@ -364,8 +375,7 @@ Add-NavSidebar "Projects-Programme.aspx" 2 2
 Add-PnPPageSection -Page "Projects-Programme.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
 Add-ListWP "Projects-Programme.aspx" 3 1 "Change Log" "All Items"
 
-try   { Set-PnPPage -Identity "Projects-Programme.aspx" -Published -ErrorAction Stop; Write-Ok "Projects-Programme.aspx published." }
-catch { Write-Warn "Could not publish Projects-Programme.aspx: $($_.Exception.Message)" }
+Publish-Page "Projects-Programme.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Cyber & Security
@@ -387,8 +397,7 @@ Add-NavSidebar "Cyber-Security.aspx" 2 2
 Add-PnPPageSection -Page "Cyber-Security.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
 Add-ListWP "Cyber-Security.aspx" 3 1 "Incident Register" "All Items"
 
-try   { Set-PnPPage -Identity "Cyber-Security.aspx" -Published -ErrorAction Stop; Write-Ok "Cyber-Security.aspx published." }
-catch { Write-Warn "Could not publish Cyber-Security.aspx: $($_.Exception.Message)" }
+Publish-Page "Cyber-Security.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # IT Operations & Architecture
@@ -410,8 +419,7 @@ Add-NavSidebar "IT-Operations-Architecture.aspx" 2 2
 Add-PnPPageSection -Page "IT-Operations-Architecture.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
 Add-ListWP "IT-Operations-Architecture.aspx" 3 1 "Change Log" "Class 1 Changes"
 
-try   { Set-PnPPage -Identity "IT-Operations-Architecture.aspx" -Published -ErrorAction Stop; Write-Ok "IT-Operations-Architecture.aspx published." }
-catch { Write-Warn "Could not publish IT-Operations-Architecture.aspx: $($_.Exception.Message)" }
+Publish-Page "IT-Operations-Architecture.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Training & Awareness
@@ -429,8 +437,7 @@ Add-PnPPageSection -Page "Training-Awareness.aspx" -SectionTemplate TwoColumnLef
 Add-ListWP    "Training-Awareness.aspx" 2 1 "Training & Awareness Register" "All Items"
 Add-NavSidebar "Training-Awareness.aspx" 2 2
 
-try   { Set-PnPPage -Identity "Training-Awareness.aspx" -Published -ErrorAction Stop; Write-Ok "Training-Awareness.aspx published." }
-catch { Write-Warn "Could not publish Training-Awareness.aspx: $($_.Exception.Message)" }
+Publish-Page "Training-Awareness.aspx"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Essential Eight Maturity
@@ -452,8 +459,7 @@ Add-NavSidebar "Essential-Eight-Maturity.aspx" 2 2
 Add-PnPPageSection -Page "Essential-Eight-Maturity.aspx" -SectionTemplate OneColumn     -Order 3 | Out-Null
 Add-ListWP "Essential-Eight-Maturity.aspx" 3 1 "Essential Eight Maturity" "Gaps Only"
 
-try   { Set-PnPPage -Identity "Essential-Eight-Maturity.aspx" -Published -ErrorAction Stop; Write-Ok "Essential-Eight-Maturity.aspx published." }
-catch { Write-Warn "Could not publish Essential-Eight-Maturity.aspx: $($_.Exception.Message)" }
+Publish-Page "Essential-Eight-Maturity.aspx"
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 
