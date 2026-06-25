@@ -1453,11 +1453,9 @@
             <!-- IT Risk Register — Executive View (High and Critical only) -->
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="IT Risk Register — High &amp; Critical Risks" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/IT-Risk-Register" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="Executive View" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: IT Risk Register — High &amp; Critical Risks (Executive View view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1465,11 +1463,9 @@
             <!-- Projects & Programme — Active Projects view -->
             <pnp:Section Order="3" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Projects &amp; Programme — Active Projects" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Projects-Programme" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="Active Projects" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Projects &amp; Programme — Active Projects (Active Projects view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1496,22 +1492,18 @@
             </pnp:Section>
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="IT Risk Register" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/IT-Risk-Register" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="All Items" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: IT Risk Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
             </pnp:Section>
             <pnp:Section Order="3" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Incident Register — Open Incidents" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Incident-Register" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="Open Incidents" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Incident Register — Open Incidents (Open Incidents view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1538,11 +1530,9 @@
             </pnp:Section>
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Policy, Standards &amp; Principles Library" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Policy-Library" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="All Items" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Policy, Standards &amp; Principles Library (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1569,22 +1559,18 @@
             </pnp:Section>
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Projects &amp; Programme" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Projects-Programme" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="All Items" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Projects &amp; Programme (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
             </pnp:Section>
             <pnp:Section Order="3" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Change Log" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Change-Log" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="All Items" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Change Log (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1611,22 +1597,18 @@
             </pnp:Section>
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Essential Eight Maturity — Assessment Summary" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Essential-Eight" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="Assessment Summary" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Essential Eight Maturity — Assessment Summary (Assessment Summary view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
             </pnp:Section>
             <pnp:Section Order="3" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Incident Register" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Incident-Register" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="All Items" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Incident Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1653,22 +1635,18 @@
             </pnp:Section>
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="CMDB — Asset &amp; Configuration Register" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/CMDB" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="All Items" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: CMDB — Asset &amp; Configuration Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
             </pnp:Section>
             <pnp:Section Order="3" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Change Log — Class 1 Changes" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Change-Log" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="Class 1 Changes" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Change Log — Class 1 Changes (Class 1 Changes view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1695,11 +1673,9 @@
             </pnp:Section>
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Training &amp; Awareness Register" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Training-Register" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="All Items" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Training &amp; Awareness Register (All Items view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1728,11 +1704,9 @@
             <!-- Primary: Assessment Summary — full width -->
             <pnp:Section Order="2" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Essential Eight — Assessment Summary" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Essential-Eight" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="Assessment Summary" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Essential Eight — Assessment Summary (Assessment Summary view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
@@ -1740,11 +1714,9 @@
             <!-- Secondary: Gaps Only — below -->
             <pnp:Section Order="3" Type="OneColumn">
               <pnp:Controls>
-                <pnp:CanvasControl WebPartType="List" Order="1" Column="1">
+                <pnp:CanvasControl WebPartType="Text" Order="1" Column="1">
                   <pnp:CanvasControlProperties>
-                    <pnp:CanvasControlProperty Key="title" Value="Essential Eight — Gaps Only (Not Met / In Progress)" />
-                    <pnp:CanvasControlProperty Key="listUrl" Value="/sites/itgovernance/Lists/Essential-Eight" />
-                    <pnp:CanvasControlProperty Key="selectedView" Value="Gaps Only" />
+                    <pnp:CanvasControlProperty Key="Text" Value="&lt;p&gt;&lt;em&gt;List web part placeholder: Essential Eight — Gaps Only (Not Met / In Progress) (Gaps Only view). Add via SharePoint after provisioning.&lt;/em&gt;&lt;/p&gt;" />
                   </pnp:CanvasControlProperties>
                 </pnp:CanvasControl>
               </pnp:Controls>
