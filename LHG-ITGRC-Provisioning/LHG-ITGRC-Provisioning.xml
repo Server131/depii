@@ -218,7 +218,7 @@
 
           <pnp:Views>
             <!-- Default view: all columns, sorted by Risk Rating descending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="RiskID" />
                 <pnp:FieldRef Name="RiskDescription" />
@@ -241,7 +241,7 @@
             </pnp:View>
 
             <!-- Escalated Risks view -->
-            <pnp:View Title="Escalated Risks" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Escalated Risks" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="RiskID" />
                 <pnp:FieldRef Name="RiskDescription" />
@@ -264,7 +264,7 @@
             </pnp:View>
 
             <!-- Executive View: High and Critical risks only -->
-            <pnp:View Title="Executive View" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Executive View" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="RiskID" />
                 <pnp:FieldRef Name="RiskDescription" />
@@ -416,7 +416,7 @@
 
           <pnp:Views>
             <!-- Default view: all columns, sorted by Care Impact Class ascending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="CIID" />
                 <pnp:FieldRef Name="CIName" />
@@ -444,7 +444,7 @@
             </pnp:View>
 
             <!-- Class 1 Systems view -->
-            <pnp:View Title="Class 1 Systems" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Class 1 Systems" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="CIID" />
                 <pnp:FieldRef Name="CIName" />
@@ -551,7 +551,7 @@
 
           <pnp:Views>
             <!-- Default view: sorted by Document Type ascending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="PolicyReference" />
                 <pnp:FieldRef Name="PolicyTitle" />
@@ -569,7 +569,7 @@
             </pnp:View>
 
             <!-- Approved Documents view -->
-            <pnp:View Title="Approved Documents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Approved Documents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="PolicyReference" />
                 <pnp:FieldRef Name="PolicyTitle" />
@@ -593,7 +593,7 @@
             </pnp:View>
 
             <!-- Due for Review within 30 days -->
-            <pnp:View Title="Due for Review" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Due for Review" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="PolicyReference" />
                 <pnp:FieldRef Name="PolicyTitle" />
@@ -696,7 +696,7 @@
 
           <pnp:Views>
             <!-- Default view: sorted by RAG Status descending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="ProjectID" />
                 <pnp:FieldRef Name="ProjectName" />
@@ -714,7 +714,7 @@
             </pnp:View>
 
             <!-- Active Projects view -->
-            <pnp:View Title="Active Projects" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Active Projects" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="ProjectID" />
                 <pnp:FieldRef Name="ProjectName" />
@@ -845,7 +845,7 @@
 
           <pnp:Views>
             <!-- Default view: all except Notes, sorted by Assessment Status ascending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="E8Control" />
                 <pnp:FieldRef Name="ControlDescription" />
@@ -870,7 +870,7 @@
             </pnp:View>
 
             <!-- Gaps Only: Not met or In progress -->
-            <pnp:View Title="Gaps Only" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Gaps Only" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="E8Control" />
                 <pnp:FieldRef Name="CurrentMaturity" />
@@ -902,7 +902,7 @@
             </pnp:View>
 
             <!-- Assessment Summary: control, maturity, gap, status, remediation target -->
-            <pnp:View Title="Assessment Summary" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Assessment Summary" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="E8Control" />
                 <pnp:FieldRef Name="CurrentMaturity" />
@@ -1008,7 +1008,7 @@
 
           <pnp:Views>
             <!-- Default view: all columns, sorted by Planned Date descending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="ChangeID" />
                 <pnp:FieldRef Name="ChangeTitle" />
@@ -1031,7 +1031,7 @@
             </pnp:View>
 
             <!-- Emergency Changes view -->
-            <pnp:View Title="Emergency Changes" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Emergency Changes" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="ChangeID" />
                 <pnp:FieldRef Name="ChangeTitle" />
@@ -1058,7 +1058,7 @@
             </pnp:View>
 
             <!-- Class 1 Changes view -->
-            <pnp:View Title="Class 1 Changes" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Class 1 Changes" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="ChangeID" />
                 <pnp:FieldRef Name="ChangeTitle" />
@@ -1190,7 +1190,7 @@
 
           <pnp:Views>
             <!-- Default view: all columns, sorted by Date Detected descending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="IncidentID" />
                 <pnp:FieldRef Name="IncidentTitle" />
@@ -1215,7 +1215,7 @@
             </pnp:View>
 
             <!-- Open Incidents view -->
-            <pnp:View Title="Open Incidents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Open Incidents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="IncidentID" />
                 <pnp:FieldRef Name="IncidentTitle" />
@@ -1247,7 +1247,7 @@
             </pnp:View>
 
             <!-- Notifiable Incidents view -->
-            <pnp:View Title="Notifiable Incidents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Notifiable Incidents" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="IncidentID" />
                 <pnp:FieldRef Name="IncidentTitle" />
@@ -1351,7 +1351,7 @@
 
           <pnp:Views>
             <!-- Default view: all columns, sorted by Due Date ascending -->
-            <pnp:View Title="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="All Items" DefaultView="TRUE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="ModuleTitle" />
                 <pnp:FieldRef Name="Audience" />
@@ -1372,7 +1372,7 @@
             </pnp:View>
 
             <!-- Overdue: due date < today AND completion < 100 -->
-            <pnp:View Title="Overdue" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
+            <pnp:View DisplayName="Overdue" DefaultView="FALSE" Paged="TRUE" RowLimit="50">
               <pnp:ViewFields>
                 <pnp:FieldRef Name="ModuleTitle" />
                 <pnp:FieldRef Name="Audience" />
